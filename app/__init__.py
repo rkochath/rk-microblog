@@ -13,8 +13,10 @@ app.config.from_object('config')
 db = SQLAlchemy(app)
 lm = LoginManager()
 lm.init_app(app)
+app.config['TRAP_BAD_REQUEST_ERRORS'] = True
 lm.login_view = 'login'
-lm.login_message = lazy_gettext('Please log in to access this page.')
+#lm.login_message = lazy_gettext('Please log in to access this page.')
+lm.login_message = 'Please log in to access this page.'
 oid = OpenID(app, os.path.join(basedir, 'tmp'))
 mail = Mail(app)
 babel = Babel(app)

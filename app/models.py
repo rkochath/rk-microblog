@@ -88,6 +88,31 @@ class Post(db.Model):
     
     def __repr__(self): # pragma: no cover
         return '<Post %r>' % (self.body)
+
+class Contracts(db.Model):
+    
+
+
+    id = db.Column(db.Integer, primary_key = True)
+    description = db.Column(db.String(140))
+    
+    start_date = db.Column(db.Date)
+    end_date = db.Column(db.Date)
+    no_vacations = db.Column(db.Integer)
+    no_holidays = db.Column(db.Integer)
+    no_sickdays = db.Column(db.Integer)
+    #hourly_rate = db.Column(db.Numeric, precision=6,scale=2)
+    hourly_rate = db.Column(db.Numeric(6,2))
+
+    work_hours = db.Column(db.Numeric(6,2))
+    income = db.Column(db.Numeric(12,2))  
+    timestamp = db.Column(db.DateTime)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+    
+    def __repr__(self): # pragma: no cover
+        return '<Contract %r>' % (self.description)
+
         
 if WHOOSH_ENABLED:
     import flask.ext.whooshalchemy as whooshalchemy

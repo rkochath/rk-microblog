@@ -3,13 +3,21 @@ from flask.ext.login import login_user, logout_user, current_user, login_require
 from flask.ext.sqlalchemy import get_debug_queries
 from flask.ext.babel import gettext
 from app import app, db, lm, oid, babel
-from forms import LoginForm, EditForm, PostForm, SearchForm
-from models import User, ROLE_USER, ROLE_ADMIN, Post
+from forms import LoginForm, EditForm, PostForm, SearchForm, RateCalcForm,ContractsListForm
+from models import User, ROLE_USER, ROLE_ADMIN, Post,Contracts
 from datetime import datetime
 from emails import follower_notification
 from guess_language import guessLanguage
 from translate import microsoft_translate
 from config import POSTS_PER_PAGE, MAX_SEARCH_RESULTS, LANGUAGES, DATABASE_QUERY_TIMEOUT, WHOOSH_ENABLED
+from calculate_income import calculate_income
+import sys
+from dateutil.parser import *
+import inspect
+
+#import commands
+
+
 
 @lm.user_loader
 def load_user(id):
@@ -51,6 +59,8 @@ def internal_error(error):
 @app.route('/index/<int:page>', methods = ['GET', 'POST'])
 @login_required
 def index(page = 1):
+   
+
     form = PostForm()
     if form.validate_on_submit():
         language = guessLanguage(form.post.data)
@@ -60,9 +70,16 @@ def index(page = 1):
             timestamp = datetime.utcnow(),
             author = g.user,
             language = language)
-        db.session.add(post)
-        db.session.commit()
-        flash(gettext('Your post is now live!'))
+#	app.logger.info('inside post submit')        
+#	flash(gettext('Your post is going to commit!'))
+
+        try :
+	        db.session.add(post)
+		db.session.commit()
+        	flash(gettext('Your post is now live!'))
+	except :
+		flash(gettext('Could not commit your post'))
+	
         return redirect(url_for('index'))
     posts = g.user.followed_posts().paginate(page, POSTS_PER_PAGE, False)
     return render_template('index.html',
@@ -193,9 +210,13 @@ def delete(id):
     if post.author.id != g.user.id:
         flash('You cannot delete this post.')
         return redirect(url_for('index'))
-    db.session.delete(post)
-    db.session.commit()
-    flash('Your post has been deleted.')
+    try:
+	    db.session.delete(post)
+	    db.session.commit()
+    	    flash('Your post has been deleted.')
+    except:
+	    flash('Could not delete the post.')
+
     return redirect(url_for('index'))
     
 @app.route('/search', methods = ['POST'])
@@ -221,4 +242,172 @@ def translate():
             request.form['text'],
             request.form['sourceLang'],
             request.form['destLang']) })
+
+
+
+@app.route('/rateinput/<int:contract_id>', methods = ['GET', 'POST'])
+@login_required
+def rateinput(contract_id):
+
+    app.logger.info('inside rateinput')        	
+
+    form = RateCalcForm()
+	
+
+    if request.method == "POST" and form.validate_on_submit():
+	app.logger.info('id %s' % form.id)        	
+	
+
+	if contract_id > 0 :
+	    contract = Contracts.query.filter_by(id = contract_id).first()	
+
+	else:
+	    contract = Contracts()
+	"""
+	    contract = Contracts(  id = form.id,
+				description = form.description.data,
+				start_date = form.start_date.data ,
+				end_date = form.end_date.data, 
+				no_vacations = form.no_vacations.data , 
+				no_holidays = form.no_holidays.data ,
+			    	no_sickdays = form.no_sickdays.data ,
+				hourly_rate = form.hourly_rate.data  ,
+				work_hours = form.work_hours.data  ,
+				income = float(form.income.data)  ,
+				timestamp = datetime.utcnow(),
+			        user_id = g.user.id)
+	
+	"""
+	form.populate_obj(contract)
+
+	contract.timestamp = datetime.utcnow()
+	contract.user_id = g.user.id
+
+        db.session.add(contract)
+	db.session.flush()
+
+        db.session.commit()
+        flash(gettext('Data saved successfully' ))
+        
+	#return redirect(url_for('rateinput',contract_id = contract.id.data))
+	#return redirect(url_for('rateinput',contract_id = contract.id))
+	
+        return redirect(url_for('contracts_list'))
+
+    contract = Contracts.query.filter_by(id = contract_id).first()	
+    form = RateCalcForm(obj=contract)
+	
+    return render_template('rate_input.html',
+        form = form)
+
+@app.route('/calculate', methods = ['POST'])
+@login_required
+def calculate():
+   
+
+    return jsonify({
+        'income': calculate_income(
+            request.form['start_date'],
+            request.form['end_date'],
+            request.form['no_vacations'],
+            request.form['no_holidays'],
+            request.form['no_sickdays'],
+            request.form['hourly_rate'],
+            request.form['work_hours']
+	) })
+@app.route('/contracts_list', methods = ['GET'])
+@app.route('/contracts_list/<int:page>', methods = ['GET'])
+@login_required
+def contracts_list(page=1):
+    #app.logger.info('inside contracts list view')        	
+    contracts = Contracts.query.filter_by(user_id = g.user.id).order_by(Contracts.timestamp.desc()).paginate(page, POSTS_PER_PAGE, False)
+    
+    form = ContractsListForm()
+        
+    return render_template('contracts_list.html',
+        title = 'List of Contracts',
+        form = form,
+        pagination = contracts)
+
+
+
+
+@app.route('/save_contract', methods = ['POST'])
+@login_required
+def save_contract():
+	app.logger.info('inside server going to save contract for id %s' % request.form['id'])
+	if request.form['id'] == '':	
+		contract_id = 0	
+	else:
+		contract_id = request.form['id']	
+	if contract_id > 0  :
+	    	contract = Contracts.query.filter_by(id = contract_id).first()	
+
+		#(  #id = int(request.form['id']),
+		contract.description = request.form['description']
+		app.logger.info('updated description')
+		contract.start_date = 	parse(request.form['start_date']) 
+		app.logger.info('start date')
+		contract.end_date = parse(request.form['end_date']) 
+		app.logger.info('end date')
+		contract.no_vacations = int(request.form['no_vacations'] )
+		app.logger.info('no vacations')
+		contract.no_holidays = int(request.form['no_holidays']) 
+		app.logger.info('holidays')
+	    	contract.no_sickdays = int(request.form['no_sickdays']) 
+		app.logger.info('sickdays')
+		contract.hourly_rate = float(request.form['hourly_rate'])  
+		app.logger.info('hourly rate')
+		contract.work_hours = float(request.form['work_hours'])  
+		app.logger.info('work hours')
+		app.logger.info('income %s' % request.form['income'] )
+		contract.income = float(request.form['income'])  
+		app.logger.info('income')
+	
+		contract.timestamp = datetime.utcnow()
+		app.logger.info('timestamp')
+		contract.user_id = g.user.id
+		app.logger.info('user id')
+
+
+	else:
+		try:
+		    	contract = Contracts(id= None,
+			        description = request.form['description'],
+				start_date = 	parse(request.form['start_date']) ,
+				end_date = parse(request.form['end_date']) ,
+				no_vacations = int(request.form['no_vacations'] ),
+				no_holidays = int(request.form['no_holidays']) ,
+			    	no_sickdays = int(request.form['no_sickdays']) ,
+				hourly_rate = float(request.form['hourly_rate'])  ,
+				work_hours = float(request.form['work_hours'])  ,
+				income = float(request.form['income']),
+				timestamp = datetime.utcnow(),
+				user_id = g.user.id
+				)
+		except:
+			e = sys.exc_info()[0]
+			app.logger.info('creation of contract object failed %s' % e)
+			return jsonify({
+					'message': '500' })
+	
+	app.logger.info('contract obj created')
+	
+	app.logger.info('populate object done')
+
+	#contract.timestamp = datetime.utcnow()
+	#contract.user_id = g.user.id
+
+	db.session.add(contract)
+	app.logger.info('add contract')
+	db.session.flush()
+
+	db.session.commit()
+	app.logger.info('commit')
+        //flash(gettext('Data saved successfully' ))
+    	return jsonify({
+		'message': 'Data Saved Successfully' })
+
+
+
 
