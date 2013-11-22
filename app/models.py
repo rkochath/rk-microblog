@@ -105,7 +105,8 @@ class Contracts(db.Model):
     hourly_rate = db.Column(db.Numeric(6,2))
 
     work_hours = db.Column(db.Numeric(6,2))
-    income = db.Column(db.Numeric(12,2))  
+    income = db.Column(db.Numeric(12,2))
+    federal_tax_rate =   db.Column(db.Numeric(6,2))
     timestamp = db.Column(db.DateTime)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 

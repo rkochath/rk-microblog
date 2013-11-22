@@ -91,6 +91,8 @@ class Post(db.Model):
 
 class Contracts(db.Model):
     
+
+
     id = db.Column(db.Integer, primary_key = True)
     description = db.Column(db.String(140))
     
