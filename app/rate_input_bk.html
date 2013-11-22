@@ -1,0 +1,120 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+<h1>{{ _('Calculate contract income') }}</h1>
+{% include 'flash.html' %}
+
+
+<div class="well">
+    <form class="form-horizontal" action="" method="post" name="post">
+        {{form.hidden_tag()}}
+
+        <div class="control-group{% if form.errors.post %} error{% endif %}">
+            <label class="control-label"  for="description">{{ _('Contract Description:') }}</label>
+            <div class="controls" >
+                {{ form.description(cols = 1, rows = 1, class = "span4")  }}
+
+                {% for error in form.errors.description %}
+                    <span class="help-inline">[{{error}}]</span><br>
+                {% endfor %}
+            </div>
+        </div>
+	
+
+        <div class="control-group{% if form.errors.post %} error{% endif %}">
+            <label class="control-label"  for="start_date">{{ _('Start Date:') }}</label>
+            <div class="controls" >
+
+                {{  momentjs(form.start_date(cols = 1, rows = 1, class = "span4")).calendar() }}
+
+ 
+
+                {% for error in form.errors.start_date %}
+                    <span class="help-inline">[{{error}}]</span><br>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="control-group{% if form.errors.post %} error{% endif %}">
+            <label class="control-label" for="end_date">{{ _('End Date:') }}</label>
+            <div class="controls">
+                {{  momentjs(form.end_date(cols = 1, rows = 1, class = "span4")).calendar()}}
+                {% for error in form.errors.end_date %}
+                    <span class="help-inline">[{{error}}]</span><br>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="control-group{% if form.errors.post %} error{% endif %}">
+            <label class="control-label" for="no_vacations">{{ _('No of vacations:') }}</label>
+            <div class="controls">
+                {{ form.no_vacations(cols = 1, rows = 2, class = "span1") }}
+                {% for error in form.errors.no_vacations %}
+                    <span class="help-inline">[{{error}}]</span><br>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="control-group{% if form.errors.post %} error{% endif %}">
+            <label class="control-label" for="no_holidays">{{ _('No of holidays:') }}</label>
+            <div class="controls">
+                {{ form.no_holidays(cols = 2, rows = 2, class = "span1") }}
+                {% for error in form.errors.no_holidays %}
+                    <span class="help-inline">[{{error}}]</span><br>
+                {% endfor %}
+            </div>
+        </div>
+
+
+        <div class="control-group{% if form.errors.post %} error{% endif %}">
+            <label class="control-label" for="no_sickdays">{{ _('No of sick days:') }}</label>
+            <div class="controls">
+                {{ form.no_sickdays(cols = 3, rows = 2, class = "span1") }}
+                {% for error in form.errors.no_sickdays %}
+                    <span class="help-inline">[{{error}}]</span><br>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="control-group{% if form.errors.post %} error{% endif %}">
+            <label class="control-label" for="hourly_rate">{{ _('Hourly Rate:') }}</label>
+            <div class="controls">
+                {{ form.hourly_rate(cols = 1, rows = 3, class = "span1") }}
+                {% for error in form.errors.hourly_rate %}
+                    <span class="help-inline">[{{error}}]</span><br>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="control-group{% if form.errors.post %} error{% endif %}">
+            <label class="control-label" for="work_hours">{{ _('Work Hours/Day:') }}</label>
+            <div class="controls">
+                {{ form.work_hours(cols = 2, rows = 3, class = "span1") }}
+                {% for error in form.errors.work_hours %}
+                    <span class="help-inline">[{{error}}]</span><br>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="control-group{% if form.errors.post %} error{% endif %}">
+            <label class="control-label" for="income">{{ _('Total Contract Income:') }}</label>
+            <div class="controls">
+                {{ form.income(cols = 2, rows = 3, class = "span2") }} <a href="javascript:calculate();">{{ _('Calculate') }}</a>
+                {% for error in form.errors.income %}
+                    <span class="help-inline">[{{error}}]</span><br>
+                {% endfor %}
+            </div>
+        </div>
+	
+        <div class="control-group">
+            <div class="controls">
+                <input class="btn btn-primary" type="submit" value="{{ _('Save') }}"> <a href="{{ url_for('index') }}"> <input class="btn" type="button" value="{{ _('Close') }}"></a>
+            </div>
+        </div>
+    </form>
+</div>
+
+</form>
+
+
+{% endblock %}

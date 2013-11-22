@@ -1,0 +1,6 @@
+<table class="table table-hover">
+    <tr>
+        <td width="70px"><a href="{{url_for('rate_input', contract_id = contract.id)}}"> />{{contract.id}}</a></td>
+        <td width="70px"><a href="{{url_for('rate_input', contract_id = contract.id)}}"> />{{contract.description}}</a></td>
+    </tr>
+</table>

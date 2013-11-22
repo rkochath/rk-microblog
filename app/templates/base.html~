@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    {% if title %}
+    <title>{{title}} - microblog</title>
+    {% else %}
+    <title>microblog</title>
+    {% endif %}
+    <link href="{{ url_for('.static', filename = 'css/bootstrap.min.css') }}" rel="stylesheet" media="screen">
+    <link href="{{ url_for('.static', filename = 'css/bootstrap-responsive.min.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+    <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+    <link rel="stylesheet" href="/resources/demos/style.css" />
+    <script src="{{ url_for('.static', filename = 'js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('.static', filename = 'js/moment.min.js') }}"></script>
+
+    {% if g.locale != 'en' %}
+    <script src="{{ url_for('.static', filename = 'js/moment-' + g.locale + '.min.js') }}"></script>
+    {% endif %}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+    function translate(sourceLang, destLang, sourceId, destId, loadingId) {
+        $(destId).hide();
+        $(loadingId).show();
+        $.post('/translate', {
+            text: $(sourceId).text(),
+            sourceLang: sourceLang,
+            destLang: destLang
+        }).done(function(translated) {
+            $(destId).text(translated['text'])
+            $(loadingId).hide();
+            $(destId).show();
+        }).fail(function() {
+            $(destId).text("{{ _('Error: Could not contact server.') }}");
+            $(loadingId).hide();
+            $(destId).show();
+        });
+    }
+    $(function() {
+    $( "#start_date" ).datepicker();
+    });
+
+   $(function() {
+    $( "#end_date" ).datepicker();
+    });
+
+   function calculate() {
+		var start_date = document.getElementById('start_date');
+		var end_date = document.getElementById('end_date');
+		var no_vacations = document.getElementById('no_vacations');	
+		var no_holidays = document.getElementById('no_holidays');	
+		var no_sickdays = document.getElementById('no_sickdays');	
+		var hourly_rate = document.getElementById('hourly_rate');	
+		var work_hours = document.getElementById('work_hours');	
+
+		
+		$.post('/calculate', {
+		    start_date:start_date.value,
+		    end_date:end_date.value,
+		    no_vacations:no_vacations.value,
+		    no_holidays:no_holidays.value,
+		    no_sickdays:no_sickdays.value,
+		    hourly_rate:hourly_rate.value,
+		    work_hours:work_hours.value
+		}).done(function(result) {
+		   document.getElementById('income').value = parseFloat(result['income']);	
+		}).fail(function() {
+		    $(income).text('***')            
+		});
+
+	    }
+	
+
+
+   function save_contract() {
+
+		var id = document.getElementById('id');
+		alert("Sending form to server"+ id.value);
+		
+		var description = document.getElementById('description');
+		var start_date = document.getElementById('start_date');
+		var end_date = document.getElementById('end_date');
+		var no_vacations = document.getElementById('no_vacations');	
+		var no_holidays = document.getElementById('no_holidays');	
+		var no_sickdays = document.getElementById('no_sickdays');	
+		var hourly_rate = document.getElementById('hourly_rate');	
+		var work_hours = document.getElementById('work_hours');
+		var income = document.getElementById('income');
+		
+		
+
+	$.post('/save_contract', {
+		    //form:document.form
+		    id :id.value,
+		    description:description.value,
+		    start_date:start_date.value,
+		    end_date:end_date.value,
+		    no_vacations:no_vacations.value,
+		    no_holidays:no_holidays.value,
+		    no_sickdays:no_sickdays.value,
+		    hourly_rate:hourly_rate.value,
+		    work_hours:work_hours.value,
+		    income:income.value,
+		    timestamp:null,
+		    user_id:null
+		    
+		}).done(function(result) {
+		   alert(parseFloat(result['message']));
+		}).fail(function() {
+		    alert(parseFloat(result['Save Failed']));	            
+		});
+
+
+	    }
+
+    </script>
+  </head>
+  <body>
+    <div class="container">
+      <div class="navbar">
+        <div class="navbar-inner">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a class="brand" href="{{ url_for('index') }}">microblog</a>
+            <!--
+	    <ul class="nav">
+	    -->
+	    <ul class="nav nav-pills">  
+              <li><a href="{{ url_for('index') }}">{{ _('Home') }}</a></li>
+              {% if g.user.is_authenticated() %}
+              <li><a href="{{ url_for('user', nickname = g.user.nickname) }}">{{ _('Your Profile') }}</a></li>
+              <li><a href="{{ url_for('contracts_list') }}">{{ _('RateCalc') }}</a></li>
+
+              <li><a href="{{ url_for('logout') }}">{{ _('Logout') }}</a></li>
+              {% endif %}
+            </ul>
+          <div class="nav-collapse collapse">
+            {% if g.user.is_authenticated() and g.search_enabled %}
+            <form class="navbar-search pull-right" action="{{url_for('search')}}" method="post" name="search">{{g.search_form.hidden_tag()}}{{g.search_form.search(size=20,placeholder=_('Search'),class="search-query")}}</form>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="span12">
+          {% block content %}{% endblock %}
+        </div>
+      </div>
+    </div>   
+  </body>
+</html>
