@@ -101,11 +101,12 @@ class Contracts(db.Model):
     no_vacations = db.Column(db.Integer)
     no_holidays = db.Column(db.Integer)
     no_sickdays = db.Column(db.Integer)
-    #hourly_rate = db.Column(db.Numeric, precision=6,scale=2)
+    hourly_rate = db.Column(db.Numeric, precision=6,scale=2)
     hourly_rate = db.Column(db.Numeric(6,2))
 
     work_hours = db.Column(db.Numeric(6,2))
-    income = db.Column(db.Numeric(12,2))  
+    income = db.Column(db.Numeric(12,2))
+    #federal_tax_rate =   db.Column(db.Numeric(6,2))
     timestamp = db.Column(db.DateTime)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
