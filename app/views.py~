@@ -404,7 +404,7 @@ def save_contract():
 
 	db.session.commit()
 	app.logger.info('commit')
-        //flash(gettext('Data saved successfully' ))
+        #flash(gettext('Data saved successfully' ))
     	return jsonify({
 		'message': 'Data Saved Successfully' })
 

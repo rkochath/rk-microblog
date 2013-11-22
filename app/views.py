@@ -12,7 +12,7 @@ from translate import microsoft_translate
 from config import POSTS_PER_PAGE, MAX_SEARCH_RESULTS, LANGUAGES, DATABASE_QUERY_TIMEOUT, WHOOSH_ENABLED
 from calculate_income import calculate_income
 import sys
-from dateutil.parser import *
+#from dateutil.parser import *
 import inspect
 
 #import commands
@@ -346,9 +346,9 @@ def save_contract():
 		#(  #id = int(request.form['id']),
 		contract.description = request.form['description']
 		app.logger.info('updated description')
-		contract.start_date = 	parse(request.form['start_date']) 
+		#contract.start_date = 	parse(request.form['start_date']) 
 		app.logger.info('start date')
-		contract.end_date = parse(request.form['end_date']) 
+		#ontract.end_date = parse(request.form['end_date']) 
 		app.logger.info('end date')
 		contract.no_vacations = int(request.form['no_vacations'] )
 		app.logger.info('no vacations')
@@ -374,8 +374,8 @@ def save_contract():
 		try:
 		    	contract = Contracts(id= None,
 			        description = request.form['description'],
-				start_date = 	parse(request.form['start_date']) ,
-				end_date = parse(request.form['end_date']) ,
+				#start_date = 	parse(request.form['start_date']) ,
+				#end_date = parse(request.form['end_date']) ,
 				no_vacations = int(request.form['no_vacations'] ),
 				no_holidays = int(request.form['no_holidays']) ,
 			    	no_sickdays = int(request.form['no_sickdays']) ,
