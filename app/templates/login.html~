@@ -43,8 +43,8 @@ function set_openid(openid, pr)
             </div>
         </div>
         <div class="control-group">
-            <div class="controls" >
-                <input class="btn btn-primary" name = "sign_in" type="submit" value="{{ _('Sign In') }}">
+            <div class="controls" for ="sign_in">
+                <input class="btn btn-primary" type="submit" value="{{ _('Sign In') }}">
             </div>
         </div>
     </form>

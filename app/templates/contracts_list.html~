@@ -19,17 +19,15 @@
         <div class="control-group">
             <div class="controls">
                 <input class="btn" type="submit" value="{{ _('Search') }}">
-		<a href="{{ url_for('rateinput', contract_id=0) }}"> <input class="btn" type="button" value="{{ _('New') }}"></a>
+		<a href="{{ url_for('rateinput', contract_id=0) }}">   <input class="btn" type="button" value="{{ _('New') }}"> </a>
             </div>
         </div>
     </form>
 </div>
 
-
 <body>  
 <table class="table">  
         <thead>  
-
           <tr>  
             <th>Contract Description</th>  
             <th>Start Date</th>  
@@ -60,44 +58,5 @@
     {% endif %}
 </ul>
 
-
-
-
-<!--
-{% macro render_pagination(pagination, endpoint) %}
-  <div class=pagination>
-  {%- for page in pagination.iter_pages() %}
-    {% if page %}
-      {% if page != pagination.page %}
-        <a href="{{ url_for(endpoint, page=page) }}">{{ page }}</a>
-      {% else %}
-        <strong>{{ page }}</strong>
-      {% endif %}
-    {% else %}
-      <span class=ellipsis>…</span>
-    {% endif %}
-  {%- endfor %}
-  </div>
-{% endmacro %}
--->
-
-
-
-
-
-
-
-
-
-
-<!--
-<title>{% block title %}{% endblock %}</title>
-<ul>
-
-{% for contract in contracts_list_page %}
-  <li><a href="{{ url_for('rateinput', contract_id = contract.id) }}">{{ contract.description }}{{ contract.start_date }}{{ contract.end_date }}</a></li>
-{% endfor %}
-</ul>
--->
 
 {% endblock %}

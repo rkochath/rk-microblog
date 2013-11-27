@@ -171,7 +171,7 @@ class TestCase(unittest.TestCase):
         assert u != None
 	contract = Contracts(id= None,
 			        description = 'Nike test contract',
-				start_date = 	parse('2013-01-01') ,
+				start_date = 	datetime('2013-01-01') ,
 				end_date = parse('2013-12-31') ,
 				no_vacations = 10,
 				no_holidays = 7,

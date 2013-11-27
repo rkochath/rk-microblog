@@ -19,11 +19,12 @@
         <div class="control-group">
             <div class="controls">
                 <input class="btn" type="submit" value="{{ _('Search') }}">
-		<a href="{{ url_for('rateinput', contract_id=0) }}"> <input class="btn" type="button" value="{{ _('New') }}"></a>
+		<a href="{{ url_for('rateinput', contract_id=0) }}">   <input class="btn" name = "new_btn" type="button" value="{{ _('New') }}"> </a>
             </div>
         </div>
     </form>
 </div>
+
 <body>  
 <table class="table">  
         <thead>  

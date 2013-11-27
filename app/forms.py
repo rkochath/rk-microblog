@@ -1,5 +1,6 @@
 from flask.ext.wtf import Form
 from wtforms import TextField, BooleanField, TextAreaField, IntegerField,DecimalField,HiddenField
+#from wtforms_components  import read_only
 from wtforms.ext.dateutil.fields import DateField, DateTimeField
 from wtforms.validators import Required, Length
 from flask.ext.babel import gettext
@@ -48,7 +49,7 @@ class RateCalcForm(Form):
     hourly_rate = DecimalField('hourly_rate', validators = [Required()], places=2) 
 
     work_hours = DecimalField('work_hours', validators = [Required()],places=2)
-    income = DecimalField('income', validators = [Required()],places=2)
+    income = DecimalField('income',places=2)
 	
     
     def __init__(self,   *args, **kwargs):
