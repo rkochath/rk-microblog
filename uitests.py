@@ -42,7 +42,7 @@ class GoogleTestCase(unittest.TestCase):
 
         self.driver = Firefox()
         self.browser = EventFiringWebDriver(self.driver, MyListener())
-        #self.addCleanup(self.browser.quit)
+        self.addCleanup(self.browser.quit)
 
     def testContractslist(self):
         self.browser.get("http://localhost/contracts_list")
