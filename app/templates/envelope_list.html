@@ -1,0 +1,66 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+
+{% include 'flash.html' %}
+<div class="well">
+    <form class="form-horizontal" action="" method="post" name="post">
+        {{form.hidden_tag()}}
+        <div class="control-group{% if form.errors.post %} error{% endif %}">
+            <label class="control-label" for="search">{{ _('Search:') }}</label>
+            <div class="controls">
+                {{ form.search(size = 30, maxlength = 140) }}
+                {% for error in form.errors.search %}
+                    <span class="help-inline">[{{error}}]</span><br>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="controls">
+                <input class="btn" type="submit" value="{{ _('Search') }}">
+		<a href="{{ url_for('envelope_entry', envelope_id=0) }}">   <input class="btn" name = "new_btn" type="button" value="{{ _('New') }}"> </a>
+            </div>
+        </div>
+    </form>
+</div>
+
+<body>  
+<table class="table">  
+        <thead>  
+          <tr>  
+            <th>Envelope</th>  
+            <th>Start Date</th>  
+            <th>End Date</th>  
+            <th>Total </th>  
+	    <th>Currency </th>  
+	    <th>Status </th>  
+          </tr>  
+        </thead>  
+        <tbody>  
+
+		{% for holders in pagination.items %}
+		  <tr><td><a href="{{ url_for('envelope_entry', envelope_id = holders.envelope.id) }}">{{ holders.envelope.description }}</td><td>{{ holders.envelope.start_date }}</td><td>{{ holders.envelope.end_date }}</td><td>{{ holders.envelope.total }}</td>
+<td>{{ holders.envelope.currency }}</td><td>{{ holders.envelope.status }}</td>
+</a></tr>
+		{% endfor %}
+
+        </tbody>  
+      </table>  
+</body>  
+
+<ul class="pager">
+    {% if pagination.has_prev %}
+    <li class="previous"><a href="{{ url_for('envelope_list', page = pagination.prev_num) }}">{{ _('Newer Envelopes') }}</a></li>
+    {% else %}
+    <li class="previous disabled"><a href="#">{{ _('Newer Envelopes') }}</a></li>
+    {% endif %}
+    {% if pagination.has_next %}
+    <li class="next"><a href="{{ url_for('envelopes_list', page = pagination.next_num) }}">{{ _('Older Envelopes') }}</a></li>
+    {% else %}
+    <li class="next disabled"><a href="#">{{ _('Older Envelopes') }}</a></li>
+    {% endif %}
+</ul>
+
+
+{% endblock %}

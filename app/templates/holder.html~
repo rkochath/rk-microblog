@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>{{ _('Envelope Entery') }}</h1>
+{% include 'flash.html' %}
+<div class="well">
+    <form class="form-horizontal" action="" method="post" name="post">
+
+<table class="table">  
+        <thead>  
+          <tr>  
+            <th>Envelope Id</th>  
+            <th>Holder Id</th>  
+            <th>No of members </th>  
+          </tr>  
+        </thead>  
+        <tbody>  
+
+		{% for holder in holders.items %}
+		  <tr><td><a>{{ holder.envelope_id }}</td><td>{{ holder.user_id }}</td><td>{{ holder.members_in_group }}</td>
+
+</a></tr>
+		{% endfor %}
+
+        </tbody>  
+      </table>  
+
+</form>
+</div>
+
+
+
+
+{% endblock %}

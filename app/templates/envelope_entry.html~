@@ -1,0 +1,133 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+
+{% include 'flash.html' %}
+
+<div class="well">
+    <form class="form-horizontal" action="" method="post" name="post">
+        {{form.hidden_tag()}}
+	<td>{{ form.id }}</td>
+        <div class="control-group{% if form.errors.post %} error{% endif %}">
+            <label class="control-label"  for="description">{{ _('Envelope Description:') }}</label>
+            <div class="controls" >
+                {{ form.description(cols = 1, rows = 1, class = "span4")  }}
+
+                {% for error in form.errors.description %}
+                    <span class="help-inline">[{{error}}]</span><br>
+                {% endfor %}
+            </div>
+        </div>
+	
+
+        <div class="control-group{% if form.errors.post %} error{% endif %}">
+            <label class="control-label"  for="start_date">{{ _('Start Date:') }}</label>
+            <div class="controls" >
+
+                {{  form.start_date(cols = 1, rows = 1, class = "span2") }}
+
+ 
+
+                {% for error in form.errors.start_date %}
+                    <span class="help-inline">[{{error}}]</span><br>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="control-group{% if form.errors.post %} error{% endif %}">
+            <label class="control-label" for="end_date">{{ _('End Date:') }}</label>
+            <div class="controls">
+                {{  form.end_date(cols = 1, rows = 1, class = "span2")}}
+                {% for error in form.errors.end_date %}
+                    <span class="help-inline">[{{error}}]</span><br>
+                {% endfor %}
+            </div>
+        </div>
+	
+        <div class="control-group{% if form.errors.post %} error{% endif %}">
+            <label class="control-label" for="amount">{{ _('Amount:') }}</label>
+            <div class="controls">
+                {{ form.amount(cols = 1, rows = 2, class = "span1") }}
+                {% for error in form.errors.amount %}
+                    <span class="help-inline">[{{error}}]</span><br>
+                {% endfor %}
+            </div>
+        </div>
+	<div class="control-group{% if form.errors.post %} error{% endif %}">
+            <label class="control-label" for="currency">{{ _('Currency:') }}</label>
+            <div class="controls">
+                {{ form.currency(cols = 2, rows = 2, class = "span1") }}
+                {% for error in form.errors.currency %}
+                    <span class="help-inline">[{{error}}]</span><br>
+                {% endfor %}
+            </div>
+        </div>
+
+	<div class="control-group{% if form.errors.post %} error{% endif %}">
+            <label class="control-label" for="status">{{ _('Status:') }}</label>
+            <div class="controls">
+                {{ form.status(cols = 2, rows = 2, class = "span1") }}
+                {% for error in form.errors.status %}
+                    <span class="help-inline">[{{error}}]</span><br>
+                {% endfor %}
+            </div>
+        </div>
+
+	
+        <div class="control-group">
+            <div class="controls">
+                 <input class="btn btn-primary" type="submit" value="{{ _('Save') }}"><a href="{{ url_for('envelope_list') }}"> 	<input class="btn" type="button" value="{{ _('Close') }}"></a>
+            </div>
+        </div>
+
+
+    </form>
+</div>
+
+
+<div class="well">
+    <form class="form-horizontal" action="" method="post" name="post">
+        {{holder_form.hidden_tag()}}
+        <div class="control-group{% if form.errors.post %} error{% endif %}">
+            <label class="control-label" for="someone">{{ _('Add some one:') }}</label>
+            <div class="controls">
+                {{ holder_form.someone(size = 30, maxlength = 140) }}
+                {% for error in form.errors.holder %}
+                    <span class="help-inline">[{{error}}]</span><br>
+                {% endfor %}
+		<input class="btn" type="submit" value="{{ _('Add') }}">
+            </div>
+        </div>
+	<!--
+        <div class="control-group">
+            <div class="controls">
+                <input class="btn" type="submit" value="{{ _('Add') }}">
+            </div>
+        </div>
+	-->
+    </form>
+</div>
+
+<body>  
+<table class="table">  
+        <thead>  
+          <tr>  
+            <th>Holder Id</th>  
+	    <th>Holder</th>
+            <th>Members of Group</th>  
+          </tr>  
+        </thead>  
+        <tbody>  
+
+		{% for holders in pagination.items %}
+		  <td>{{ holders.id }}</td><td>{{ holders.nickname }}</td><td>{{ holders.Holders.members_in_group }}</td>
+
+</tr>
+		{% endfor %}
+
+        </tbody>  
+      </table>  
+</body>  
+
+
+{% endblock %}
