@@ -2,20 +2,22 @@ from flask import render_template, flash, redirect, session, url_for, request, g
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from flask.ext.sqlalchemy import get_debug_queries
 from flask.ext.babel import gettext
-from app import app, db, lm, oid, babel
+from app import app, db, lm, oid, babel, gi
 from forms import LoginForm, EditForm, PostForm, SearchForm, RateCalcForm,ContractsListForm
 from models import User, ROLE_USER, ROLE_ADMIN, Post,Contracts
 from datetime import datetime
 from emails import follower_notification
 from guess_language import guessLanguage
 from translate import microsoft_translate
-from config import POSTS_PER_PAGE, MAX_SEARCH_RESULTS, LANGUAGES, DATABASE_QUERY_TIMEOUT, WHOOSH_ENABLED
+from config import POSTS_PER_PAGE, MAX_SEARCH_RESULTS, LANGUAGES, DATABASE_QUERY_TIMEOUT, WHOOSH_ENABLED, OAUTH_ENABLED,ADMINS
 from calculate_income import calculate_income
 import sys
 from dateutil.parser import *
 import inspect
+import bust_a_bill_views
+import pygeoip
 
-#import commands
+
 
 
 
@@ -90,23 +92,33 @@ def index(page = 1):
 @app.route('/login', methods = ['GET', 'POST'])
 @oid.loginhandler
 def login():
+
     if g.user is not None and g.user.is_authenticated():
         return redirect(url_for('index'))
     form = LoginForm()
-    if form.validate_on_submit():
+    if form.validate_on_submit() and OAUTH_ENABLED:
         session['remember_me'] = form.remember_me.data
         return oid.try_login(form.openid.data, ask_for = ['nickname', 'email'])
+    elif not  OAUTH_ENABLED:
+        user = User.query.filter_by(email = ADMINS[0]).first()	
+	login_user(user, remember = False)
+	
+        return redirect(url_for('index'))
+
+
+        
     return render_template('login.html', 
         title = 'Sign In',
         form = form,
         providers = app.config['OPENID_PROVIDERS'])
 
 @oid.after_login
-def after_login(resp):
-    if resp.email is None or resp.email == "":
+def after_login(resp=""):
+    if OAUTH_ENABLED and resp.email is None or resp.email == "":
         flash(gettext('Invalid login. Please try again.'))
         return redirect(url_for('login'))
-    user = User.query.filter_by(email = resp.email).first()
+    user = User.query.filter_by(email = resp.email).first()	
+
     if user is None:
         nickname = resp.nickname
         if nickname is None or nickname == "":
@@ -158,6 +170,14 @@ def edit():
     elif request.method != "POST":
         form.nickname.data = g.user.nickname
         form.about_me.data = g.user.about_me
+        geo_data = gi.record_by_addr(request.remote_addr)
+#{'city': 'Mountain View', 'region_name': 'CA', 'area_code': 650, 'longitude': -122.0574, 'country_code3': 'USA', 'latitude': 37.419199999999989, 'postal_code': '94043', 'dma_code': 807, 'country_code': 'US', 'country_name': 'United States'}
+
+
+
+        #form.geoip = geo_data['city'] +","+geo_data['region_name']+","+geo_data['country_code']
+	form.geoip = jsonify(geo_data)
+
     return render_template('edit.html',
         form = form)
 
@@ -317,7 +337,7 @@ def calculate():
 	) })
 @app.route('/contracts_list', methods = ['GET'])
 @app.route('/contracts_list/<int:page>', methods = ['GET'])
-#@login_required
+@login_required
 def contracts_list(page=1):
     #app.logger.info('inside contracts list view')        	
     contracts = Contracts.query.filter_by(user_id = g.user.id).order_by(Contracts.timestamp.desc()).paginate(page, POSTS_PER_PAGE, False)
@@ -368,6 +388,12 @@ def save_contract():
 		app.logger.info('timestamp')
 		contract.user_id = g.user.id
 		app.logger.info('user id')
+		app.logger.info('contract obj created')
+		db.session.add(contract)
+		app.logger.info('add contract')
+		db.session.flush()
+		db.session.commit()
+		app.logger.info('contract updated')
 
 
 	else:
@@ -385,28 +411,23 @@ def save_contract():
 				timestamp = datetime.utcnow(),
 				user_id = g.user.id
 				)
+			app.logger.info('contract obj created')
+			db.session.add(contract)
+			app.logger.info('add contract')
+			db.session.flush()
+			db.session.commit()
+			app.logger.info('new contract created')
+
+			#flash(gettext('Data saved successfully' ))
+
 		except:
 			e = sys.exc_info()[0]
 			app.logger.info('creation of contract object failed %s' % e)
 			return jsonify({
 					'message': '500' })
 	
-	app.logger.info('contract obj created')
-	
-	app.logger.info('populate object done')
-
-	#contract.timestamp = datetime.utcnow()
-	#contract.user_id = g.user.id
-
-	db.session.add(contract)
-	app.logger.info('add contract')
-	db.session.flush()
-
-	db.session.commit()
-	app.logger.info('commit')
-        #flash(gettext('Data saved successfully' ))
-    	return jsonify({
-		'message': 'Data Saved Successfully' })
+	return jsonify({
+	'message': 'Data Saved Successfully' })
 
 
 

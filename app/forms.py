@@ -5,6 +5,9 @@ from wtforms.ext.dateutil.fields import DateField, DateTimeField
 from wtforms.validators import Required, Length
 from flask.ext.babel import gettext
 from app.models import User
+import bust_a_bill_forms
+ 
+
 class LoginForm(Form):
     openid = TextField('openid', validators = [Required()])
     remember_me = BooleanField('remember_me', default = False)
@@ -12,6 +15,7 @@ class LoginForm(Form):
 class EditForm(Form):
     nickname = TextField('nickname', validators = [Required()])
     about_me = TextAreaField('about_me', validators = [Length(min = 0, max = 140)])
+    geoip = TextAreaField('geoip', validators = [Length(min = 0, max = 140)])
     
     def __init__(self, original_nickname, *args, **kwargs):
         Form.__init__(self, *args, **kwargs)

@@ -76,7 +76,7 @@
    function save_contract() {
 
 		var id = document.getElementById('id');
-		alert("Sending form to server"+ id.value);
+		//alert("Sending form to server"+ id.value);
 		
 		var description = document.getElementById('description');
 		var start_date = document.getElementById('start_date');
@@ -106,9 +106,9 @@
 		    user_id:null
 		    
 		}).done(function(result) {
-		   alert(parseFloat(result['message']));
+		  // alert(parseFloat(result['message']));
 		}).fail(function() {
-		    alert(parseFloat(result['Save Failed']));	            
+		    //alert(parseFloat(result['Save Failed']));	            
 		});
 
 

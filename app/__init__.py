@@ -5,14 +5,20 @@ from flask.ext.login import LoginManager
 from flask.ext.openid import OpenID
 from flask.ext.mail import Mail
 from flask.ext.babel import Babel, lazy_gettext
-from config import basedir, ADMINS, MAIL_SERVER, MAIL_PORT, MAIL_USERNAME, MAIL_PASSWORD
+from config import basedir, ADMINS, MAIL_SERVER, MAIL_PORT, MAIL_USERNAME, MAIL_PASSWORD,GEOIP_CITYDB
 from momentjs import momentjs
+import pygeoip
 
 app = Flask(__name__)
+
 app.config.from_object('config')
 db = SQLAlchemy(app)
 lm = LoginManager()
 lm.init_app(app)
+# Make sure this points to your downloaded file
+gi = pygeoip.GeoIP(GEOIP_CITYDB, pygeoip.MEMORY_CACHE)
+
+
 app.config['TRAP_BAD_REQUEST_ERRORS'] = True
 lm.login_view = 'login'
 #lm.login_message = lazy_gettext('Please log in to access this page.')

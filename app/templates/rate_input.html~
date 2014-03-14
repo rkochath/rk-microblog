@@ -107,7 +107,7 @@
 	
         <div class="control-group">
             <div class="controls">
-                 <input class="btn btn-primary" type="submit" value="{{ _('Save') }}"><a href="{{ url_for('contracts_list') }}"> <input class="btn" type="button" value="{{ _('Close') }}"></a>
+                 <input class="btn btn-primary" type="submit" value="{{ _('Save') }}"><a href="{{ url_for('contracts_list') }}"> <input class="btn" type="button" value="{{ _('Close') }}"></a><a href="javascript:save_contract();"><input class="btn btn-primary" type="button" value="{{ _('Update') }}"></a>
             </div>
         </div>
 	<!--

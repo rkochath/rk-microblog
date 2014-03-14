@@ -134,6 +134,7 @@
               {% if g.user.is_authenticated() %}
               <li><a href="{{ url_for('user', nickname = g.user.nickname) }}">{{ _('Your Profile') }}</a></li>
               <li><a href="{{ url_for('contracts_list') }}">{{ _('RateCalc') }}</a></li>
+	      <li><a href="{{ url_for('envelope_list') }}">{{ _('Bust-A-Bill') }}</a></li>
 
               <li><a href="{{ url_for('logout') }}">{{ _('Logout') }}</a></li>
               {% endif %}
