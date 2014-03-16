@@ -27,3 +27,4 @@ subprocess.call([os.path.join('flask', bin, 'pip'), 'install', 'coverage'])
 subprocess.call([os.path.join('flask', bin, 'pip'), 'install', 'python-dateutil'])
 subprocess.call([os.path.join('flask', bin, 'pip'), 'install', 'mysql-python'])
 subprocess.call([os.path.join('flask', bin, 'pip'), 'install', 'pygeoip'])
+
