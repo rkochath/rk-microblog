@@ -162,10 +162,11 @@ def edit():
     form = EditForm(g.user.nickname)
     geo_data = gi.record_by_addr(request.remote_addr)
 #{'city': 'Mountain View', 'region_name': 'CA', 'area_code': 650, 'longitude': -122.0574, 'country_code3': 'USA', 'latitude': 37.419199999999989, 'postal_code': '94043', 'dma_code': 807, 'country_code': 'US', 'country_name': 'United States'}
-        
+    #form.geoip = str(request.remote_addr)    
+    flash('You are logged from ' + str(request.remote_addr))
     if geo_data :
 	#form.geoip = jsonify(geo_data)
-        form.geoip = geo_data.city +","+geo_data.region_name+","+geo_data.country_code
+        flash('You are logged from ' +  str(request.remote_addr) +":"+geo_data.city +","+geo_data.region_name+","+geo_data.country_code)
 
     if form.validate_on_submit():
         g.user.nickname = form.nickname.data

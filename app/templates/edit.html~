@@ -20,7 +20,7 @@
         <div class="control-group{% if form.errors.post %} error{% endif %}">
             <label class="control-label" for="GioIP">{{ _('Your are logged in from:') }}</label>
             <div class="controls">
-                {{ form.geoip( class = "span8") }}
+                {{ form.geoip( maxlength = 64 , class = "span8") }}
                 {% for error in form.errors.geoip %}
                     <span class="help-inline">[{{error}}]</span><br>
                 {% endfor %}
