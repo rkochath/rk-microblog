@@ -16,6 +16,17 @@
                 {% endfor %}
             </div>
         </div>
+
+        <div class="control-group{% if form.errors.post %} error{% endif %}">
+            <label class="control-label" for="GioIP">{{ _('Your are logged in from:') }}</label>
+            <div class="controls">
+                {{ form.geoip( class = "span8") }}
+                {% for error in form.errors.geoip %}
+                    <span class="help-inline">[{{error}}]</span><br>
+                {% endfor %}
+            </div>
+        </div>
+
         <div class="control-group{% if form.errors.post %} error{% endif %}">
             <label class="control-label" for="about_me">{{ _('About yourself:') }}</label>
             <div class="controls">

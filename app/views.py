@@ -177,7 +177,9 @@ def edit():
 
         #form.geoip = geo_data['city'] +","+geo_data['region_name']+","+geo_data['country_code']
 	if geo_data :
-		form.geoip = jsonify(geo_data)
+		#form.geoip = jsonify(geo_data)
+        	form.geoip = geo_data.city +","+geo_data.region_name+","+geo_data.country_code
+	
 
     return render_template('edit.html',
         form = form)
