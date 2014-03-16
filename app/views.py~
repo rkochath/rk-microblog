@@ -160,6 +160,13 @@ def user(nickname, page = 1):
 @login_required
 def edit():
     form = EditForm(g.user.nickname)
+    geo_data = gi.record_by_addr(request.remote_addr)
+#{'city': 'Mountain View', 'region_name': 'CA', 'area_code': 650, 'longitude': -122.0574, 'country_code3': 'USA', 'latitude': 37.419199999999989, 'postal_code': '94043', 'dma_code': 807, 'country_code': 'US', 'country_name': 'United States'}
+        
+	if geo_data :
+		#form.geoip = jsonify(geo_data)
+        	form.geoip = geo_data.city +","+geo_data.region_name+","+geo_data.country_code
+
     if form.validate_on_submit():
         g.user.nickname = form.nickname.data
         g.user.about_me = form.about_me.data
@@ -170,14 +177,7 @@ def edit():
     elif request.method != "POST":
         form.nickname.data = g.user.nickname
         form.about_me.data = g.user.about_me
-        geo_data = gi.record_by_addr(request.remote_addr)
-#{'city': 'Mountain View', 'region_name': 'CA', 'area_code': 650, 'longitude': -122.0574, 'country_code3': 'USA', 'latitude': 37.419199999999989, 'postal_code': '94043', 'dma_code': 807, 'country_code': 'US', 'country_name': 'United States'}
-
-
-
-        #form.geoip = geo_data['city'] +","+geo_data['region_name']+","+geo_data['country_code']
-	if geo_data :
-		form.geoip = jsonify(geo_data)
+	
 
     return render_template('edit.html',
         form = form)
