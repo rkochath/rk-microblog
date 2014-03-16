@@ -15,9 +15,6 @@ app.config.from_object('config')
 db = SQLAlchemy(app)
 lm = LoginManager()
 lm.init_app(app)
-# Make sure this points to your downloaded file
-gi = pygeoip.GeoIP(GEOIP_CITYDB, pygeoip.MEMORY_CACHE)
-
 
 app.config['TRAP_BAD_REQUEST_ERRORS'] = True
 lm.login_view = 'login'
@@ -56,5 +53,11 @@ if os.environ.get('HEROKU') is not None:
 
 app.jinja_env.globals['momentjs'] = momentjs
 
+gi = pygeoip.GeoIP(GEOIP_CITYDB, pygeoip.MEMORY_CACHE)
+app.logger.info('GeoIP data file:'+GEOIP_CITYDB)
+
 from app import views, models
 
+
+
+app.logger.info('microblog startup')
