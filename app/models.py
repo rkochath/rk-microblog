@@ -90,9 +90,6 @@ class Post(db.Model):
         return '<Post %r>' % (self.body)
 
 class Contracts(db.Model):
-    
-
-
     id = db.Column(db.Integer, primary_key = True)
     description = db.Column(db.String(140))
     
@@ -101,16 +98,43 @@ class Contracts(db.Model):
     no_vacations = db.Column(db.Integer)
     no_holidays = db.Column(db.Integer)
     no_sickdays = db.Column(db.Integer)
-    #hourly_rate = db.Column(db.Numeric, precision=6,scale=2)
     hourly_rate = db.Column(db.Numeric(6,2))
 
     work_hours = db.Column(db.Numeric(6,2))
+
+    exclude_nth = db.Column(db.Integer)
+    exclude_day = db.Column(db.String(2))
+
     income = db.Column(db.Numeric(12,2))
-    #federal_tax_rate =   db.Column(db.Numeric(6,2))
+    expense = db.Column(db.Numeric(12,2))   
+
+
+    is_rent_acar=db.Column(db.Boolean)
+    rental_st_day=db.Column(db.String(2))
+    rental_end_day=db.Column(db.String(2))
+
+    rental_car_rate = db.Column(db.Numeric(6,2))
+
+    is_hotel = db.Column(db.Boolean)
+    hotel_st_day = db.Column(db.String(2))
+    hotel_end_day = db.Column(db.String(2))
+    hotel_rate = db.Column(db.Numeric(6,2))
+    daily_expense = db.Column(db.Numeric(6,2))
+    
+    is_flight = db.Column(db.Boolean)
+    flight_ticket = db.Column(db.Numeric(6,2))
+
+    is_airport_pickup = db.Column(db.Boolean)
+    airport_pickup = db.Column(db.Numeric(6,2))
+
+    is_mileage = db.Column(db.Boolean)
+    commute_st_day = db.Column(db.String(2))
+    commute_end_day = db.Column(db.String(2))
+    daily_miles = db.Column(db.Numeric(6,2))
+    mileage_rate = db.Column(db.Numeric(6,2))
     timestamp = db.Column(db.DateTime)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-
-    
+        
     def __repr__(self): # pragma: no cover
         return '<Contract %r>' % (self.description)
 

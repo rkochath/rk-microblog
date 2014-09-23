@@ -5,36 +5,40 @@
 <h1>{{ _('Calculate contract income') }}</h1>
 {% include 'flash.html' %}
 
+<script  >
+//$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+
+</script>
 
 <div class="well">
-    <form class="form-horizontal" action="" method="post" name="post">
+    <form id = "rate_input_form" class="form-horizontal" action="" method="post" name="rate_input" >
         {{form.hidden_tag()}}
 	<td>{{ form.id }}</td>
         <div class="control-group{% if form.errors.post %} error{% endif %}">
             <label class="control-label"  for="description">{{ _('Contract Description:') }}</label>
             <div class="controls" >
                 {{ form.description(cols = 1, rows = 1, class = "span4")  }}
-
                 {% for error in form.errors.description %}
                     <span class="help-inline">[{{error}}]</span><br>
                 {% endfor %}
             </div>
         </div>
-	
+
+<div class="row">
+<div class="span3">
 
         <div class="control-group{% if form.errors.post %} error{% endif %}">
             <label class="control-label"  for="start_date">{{ _('Start Date:') }}</label>
             <div class="controls" >
-
                 {{  form.start_date(cols = 1, rows = 1, class = "span2") }}
-
- 
-
                 {% for error in form.errors.start_date %}
                     <span class="help-inline">[{{error}}]</span><br>
                 {% endfor %}
             </div>
         </div>
+</div>
+<div class="span3">
+
         <div class="control-group{% if form.errors.post %} error{% endif %}">
             <label class="control-label" for="end_date">{{ _('End Date:') }}</label>
             <div class="controls">
@@ -44,6 +48,8 @@
                 {% endfor %}
             </div>
         </div>
+</div>
+</div>
 	
         <div class="control-group{% if form.errors.post %} error{% endif %}">
             <label class="control-label" for="no_vacations">{{ _('No of vacations:') }}</label>
@@ -95,10 +101,37 @@
             </div>
         </div>
 
+<div class="row">
+<div class="span3">
+
+        <div class="control-group{% if form.errors.post %} error{% endif %}">
+            <label class="control-label" for="exclude_nth">{{ _('Exclude :') }}</label>
+            <div class="controls">
+                {{ form.exclude_nth(cols = 2, rows = 3, class = "span1") }}
+                {% for error in form.errors.exclude_nth %}
+                    <span class="help-inline">[{{error}}]</span><br>
+                {% endfor %}
+            </div>
+        </div>
+</div>
+<div class="span3">
+        <div class="control-group{% if form.errors.post %} error{% endif %}">
+            <label class="control-label" for="exclude_day">{{ _('Day:') }}</label>
+            <div class="controls">
+                {{ form.exclude_day(cols = 2, rows = 3, class = "span1") }}
+                {% for error in form.errors.exclude_day %}
+                    <span class="help-inline">[{{error}}]</span><br>
+                {% endfor %}
+            </div>
+        </div>
+
+</div>
+</div>
+
         <div class="control-group{% if form.errors.post %} error{% endif %}">
             <label class="control-label" for="income">{{ _('Total Contract Income:') }}</label>
             <div class="controls">
-                {{ form.income(cols = 2, rows = 3, class = "span2") }} <a href="javascript:calculate();">{{ _('Calculate') }}</a>
+                {{ form.income( ReadOnly =True, cols = 2, rows = 3, class = "span2") }} <a href="javascript:calculate();">{{ _('Calculate') }}</a>
                 {% for error in form.errors.income %}
                     <span class="help-inline">[{{error}}]</span><br>
                 {% endfor %}
@@ -108,22 +141,35 @@
         <div class="control-group">
             <div class="controls">
                  <input class="btn btn-primary" type="submit" value="{{ _('Save') }}"><a href="{{ url_for('contracts_list') }}"> <input class="btn" type="button" value="{{ _('Close') }}"></a><a href="javascript:save_contract();"><input class="btn btn-primary" type="button" value="{{ _('Update') }}"></a>
-            </div>
-        </div>
-	<!--
-	<div class="control-group">
-            <div class="controls">
-                 <a href="javascript:save_contract();"><input class="btn btn-primary" type="button" value="{{ _('Save') }}"></a><a href="{{ url_for('contracts_list') }}"> <input class="btn" type="button" value="{{ _('Close') }}"></a>
-            </div>
-        </div>
-	-->
+<input id=deduct class="btn" type="button" value="{{ _('Enter Deductions') }}">
 
+            </div>
+        </div>
+
+
+<script>
+$( document ).ready(function(){
+   $( "#deduct" ).click(function() {
+
+	var contract_id = save_contract();
+	//save_contract();
+	
+	//var contract_id = document.getElementById('id');
+	alert("Open deductions form for "+ contract_id + "(:"); 
+	//var str_form = $( "form" ).serialize();
+	//var url = flask_util.url_for('rate_input_deductions' ,{ contract_str:$( "form" ).serialize();});
+        //var url = flask_util.url_for('rate_input_deductions' ,{ contract_str:str_form});
+	var url = flask_util.url_for('rate_input_deductions' ,{ contract_str:contract_id});
+	
+	$(location).attr('href',url);		
+    });
+});
+
+</script>
 
 
     </form>
 </div>
 
 </form>
-
-
 {% endblock %}

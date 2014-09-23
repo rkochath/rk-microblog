@@ -8,8 +8,13 @@ from flask.ext.babel import Babel, lazy_gettext
 from config import basedir, ADMINS, MAIL_SERVER, MAIL_PORT, MAIL_USERNAME, MAIL_PASSWORD,GEOIP_CITYDB
 from momentjs import momentjs
 import pygeoip
+from flask_util_js import FlaskUtilJs
+
 
 app = Flask(__name__)
+fujs = FlaskUtilJs(app)
+
+
 
 app.config.from_object('config')
 db = SQLAlchemy(app)

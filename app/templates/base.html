@@ -10,6 +10,7 @@
     <link href="{{ url_for('.static', filename = 'css/bootstrap-responsive.min.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
     <script src="http://code.jquery.com/jquery-latest.js"></script>
+    {{ fujs.js }}
     <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
     <link rel="stylesheet" href="/resources/demos/style.css" />
     <script src="{{ url_for('.static', filename = 'js/bootstrap.min.js') }}"></script>
@@ -20,6 +21,7 @@
     {% endif %}
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script>
+
     function translate(sourceLang, destLang, sourceId, destId, loadingId) {
         $(destId).hide();
         $(loadingId).show();
@@ -52,9 +54,11 @@
 		var no_holidays = document.getElementById('no_holidays');	
 		var no_sickdays = document.getElementById('no_sickdays');	
 		var hourly_rate = document.getElementById('hourly_rate');	
-		var work_hours = document.getElementById('work_hours');	
+		var work_hours = document.getElementById('work_hours');
+		var exclude_nth = document.getElementById('exclude_nth');	
+		var exclude_day = document.getElementById('exclude_day');		
 
-		
+		   alert("Going to calculate");	
 		$.post('/calculate', {
 		    start_date:start_date.value,
 		    end_date:end_date.value,
@@ -62,9 +66,13 @@
 		    no_holidays:no_holidays.value,
 		    no_sickdays:no_sickdays.value,
 		    hourly_rate:hourly_rate.value,
-		    work_hours:work_hours.value
+		    work_hours:work_hours.value,
+		    exclude_nth:exclude_nth.value,	
+		    exclude_day:exclude_day.value 	
+
 		}).done(function(result) {
-		   document.getElementById('income').value = parseFloat(result['income']);	
+		   document.getElementById('income').value = parseFloat(result['income']);
+		   alert("Calculated Income"+ result['income']);	
 		}).fail(function() {
 		    $(income).text('***')            
 		});
@@ -73,11 +81,71 @@
 	
 
 
+   function calculate_expense() {
+	    alert("Going to calculate expense");	
+
+	    var start_date = document.getElementById('start_date');
+	    var end_date = document.getElementById('end_date');
+	    var is_rent_acar = document.getElementById('is_rent_acar').checked?'true':'false';
+	    var rental_st_day = document.getElementById('rental_st_day');
+	    var rental_end_day = document.getElementById('rental_end_day');
+            var rental_car_rate = document.getElementById('rental_car_rate');
+	    var is_hotel = document.getElementById('is_hotel').checked?'true':'false';
+	    var hotel_st_day = document.getElementById('hotel_st_day');
+	    var hotel_end_day = document.getElementById('hotel_end_day');
+	    var is_flight = document.getElementById('is_flight').checked?'true':'false';
+	    var is_airport_pickup = document.getElementById('is_airport_pickup').checked?'true':'false';
+	    var is_mileage = document.getElementById('is_mileage').checked?'true':'false';
+	    var commute_st_day = document.getElementById('commute_st_day');
+	    var commute_end_day = document.getElementById('commute_end_day');
+	    var rental_car_rate = document.getElementById('rental_car_rate');
+	    var hotel_rate = document.getElementById('hotel_rate');
+	    var flight_ticket = document.getElementById('flight_ticket');
+	    var airport_pickup = document.getElementById('airport_pickup');
+	    var daily_expense = document.getElementById('daily_expense');
+	    var daily_miles = document.getElementById('daily_miles');
+	    var mileage_rate = document.getElementById('mileage_rate');
+	    
+	    
+	    $.post('/calculate_expense', {
+		    start_date:start_date.value,
+		    end_date:end_date.value,
+		    is_rent_acar :is_rent_acar,
+		    rental_st_day :rental_st_day.value,
+		    rental_end_day:rental_end_day.value,
+		    rental_car_rate:rental_car_rate.value,
+		    is_mileage:is_mileage ,
+		    commute_st_day:commute_st_day.value,
+		    commute_end_day:commute_end_day.value,
+		    daily_miles:daily_miles.value,
+		    mileage_rate:mileage_rate.value, 
+		    is_hotel:is_hotel ,
+		    hotel_st_day:hotel_st_day.value,
+		    hotel_end_day:hotel_end_day.value,
+		    hotel_rate:hotel_rate.value,
+		    
+		    daily_expense:daily_expense.value,
+		    is_flight:is_flight ,
+		    flight_ticket:flight_ticket.value,
+	
+		    is_airport_pickup:is_airport_pickup ,
+		    airport_pickup:airport_pickup.value
+		    
+		    
+		}).done(function(result) {
+		   document.getElementById('expense').value = parseFloat(result['expense']);	
+		}).fail(function() {
+		    $(income).text('***')            
+		});
+
+
+	    }
+
+
+
    function save_contract() {
 
 		var id = document.getElementById('id');
-		//alert("Sending form to server"+ id.value);
-		
 		var description = document.getElementById('description');
 		var start_date = document.getElementById('start_date');
 		var end_date = document.getElementById('end_date');
@@ -87,11 +155,16 @@
 		var hourly_rate = document.getElementById('hourly_rate');	
 		var work_hours = document.getElementById('work_hours');
 		var income = document.getElementById('income');
+		var exclude_nth = document.getElementById('exclude_nth');
+		var exclude_day = document.getElementById('exclude_day');
+		var contract_id = 0;
+		
+
 		
 		
 
 	$.post('/save_contract', {
-		    //form:document.form
+
 		    id :id.value,
 		    description:description.value,
 		    start_date:start_date.value,
@@ -102,17 +175,91 @@
 		    hourly_rate:hourly_rate.value,
 		    work_hours:work_hours.value,
 		    income:income.value,
+		    exclude_nth:exclude_nth.value,
+		    exclude_day:exclude_day.value,
 		    timestamp:null,
 		    user_id:null
 		    
 		}).done(function(result) {
-		  // alert(parseFloat(result['message']));
+		  contract_id = parseInt(result['id']);
+		  alert("Open deductions form for "+ contract_id +":)"); 
+
+		  document.getElementById('id').value = parseInt(result['id']);	
+		  
+		  
 		}).fail(function() {
-		    //alert(parseFloat(result['Save Failed']));	            
+		  alert("Update failed");
+		  
+		});
+
+	    //return contract_id;
+	alert("Open deductions form for "+ contract_id +":):)"); 
+	return contract_id;
+
+	    }
+
+   function update_deductions() {
+	    alert("Going for deductions update");
+	    var id = document.getElementById('id');
+	    var is_rent_acar = document.getElementById('is_rent_acar');
+	    var rental_st_day = document.getElementById('rental_st_day');
+	    var rental_end_day = document.getElementById('rental_end_day');
+	    var is_hotel = document.getElementById('is_hotel');
+	    var hotel_st_day = document.getElementById('hotel_st_day');
+	    var hotel_end_day = document.getElementById('hotel_end_day');
+	    var is_flight = document.getElementById('is_flight');
+	    var is_airport_pickup = document.getElementById('is_airport_pickup');
+	    var is_mileage = document.getElementById('is_mileage');
+	    var commute_st_day = document.getElementById('commute_st_day');
+	    var commute_end_day = document.getElementById('commute_end_day');
+	    var rental_car_rate = document.getElementById('rental_car_rate');
+	    var hotel_rate = document.getElementById('hotel_rate');
+	    var flight_ticket = document.getElementById('flight_ticket');
+	    var airport_pickup = document.getElementById('airport_pickup');
+	    var daily_expense = document.getElementById('daily_expense');
+	    var daily_miles = document.getElementById('daily_miles');
+	    var mileage_rate = document.getElementById('mileage_rate');
+	    var expense = document.getElementById('expense');
+
+	    alert("post /update_deductions");
+
+	$.post('/update_deductions', {
+		    
+		    id :id.value,
+		    
+		    is_rent_acar :is_rent_acar.value,
+		    rental_st_day :rental_st_day.value,
+
+		    rental_end_day:rental_end_day.value,
+		    is_hotel:is_hotel.value,
+		    hotel_st_day:hotel_st_day.value,
+
+		    hotel_end_day:hotel_end_day.value,
+
+		    is_flight:is_flight.value,
+	
+		    is_airport_pickup:is_airport_pickup.value,
+		    is_mileage:is_mileage.value,
+
+		    commute_st_day:commute_st_day.value,
+		    commute_end_day:commute_end_day.value,
+		    rental_car_rate:rental_car_rate.value,
+		    hotel_rate:hotel_rate.value,
+		    flight_ticket:flight_ticket.value,
+		    airport_pickup:airport_pickup.value,
+		    daily_expense:daily_expense.value,
+		    daily_miles:daily_miles.value,
+		    mileage_rate:mileage_rate.value,
+		    expense:expense.value	 
+		}).done(function(result) {
+		  alert("Successfully updated the contract");
+		}).fail(function() {
+		  alert("Update failed");
 		});
 
 
 	    }
+
 
     </script>
   </head>

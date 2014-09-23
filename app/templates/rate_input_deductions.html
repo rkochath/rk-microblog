@@ -1,0 +1,389 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+<h1>{{ _('Calculate contract income') }}</h1>
+{% include 'flash.html' %}
+
+
+<div class="well">
+	    <form class="form-horizontal" action="" method="post" name="post">
+		{{form.hidden_tag()}}
+		<td>{{ form.id }}</td>
+
+<div class="row">
+
+	<div class="span5">
+
+		<div class="control-group{% if form.errors.post %} error{% endif %}">
+		    <label class="control-label"  for="description">{{ _('Contract Description:') }}</label>
+		    <div class="controls" >
+		        {{ form.description(ReadOnly = True,cols = 1, rows = 1, class = "span4")  }}
+
+		        {% for error in form.errors.description %}
+		            <span class="help-inline">[{{error}}]</span><br>
+		        {% endfor %}
+		    </div>
+		</div>
+	</div>
+
+
+	<div class="span3">
+		<div class="control-group">
+		    <label class="control-label"  for="start_date">{{ _('Start Date:') }}	    </label>            
+		    <div class="controls" >
+
+		        {{ form.start_date(ReadOnly = True,cols = 1, rows = 1, class = "span2")  }}
+
+		        {% for error in form.errors.start_date %}
+		            <span class="help-inline">[{{error}}]</span><br>
+		        {% endfor %}
+		    </div>
+
+		</div>	
+	</div>
+	<div class="span3">
+
+		<div class="control-group">
+		    <label class="control-label"  for="end_date">{{ _('End Date:') }}</label>
+		    <div class="controls" >
+		        {{ form.end_date(ReadOnly = True,cols = 1, rows = 1, class = "span2")  }}
+
+		        {% for error in form.errors.end_date %}
+		            <span class="help-inline">[{{error}}]</span><br>
+		        {% endfor %}
+		    </div>
+		</div>	
+	</div>
+
+	</div>
+
+<div class="row">
+<div class="span2">
+
+	<div class="control-group{% if form.errors.post %} error{% endif %}">
+            <label class="control-label"  for="is_rent_acar">{{ _('Rent A Car:') }}</label>
+            <div class="controls"  input type="checkbox">
+
+                {{ form.is_rent_acar( cols = 3, rows = 2, class = "span2")  }}
+
+                {% for error in form.errors.is_rent_acar %}
+                    <span class="help-inline">[{{error}}]</span><br>
+                {% endfor %}
+            </div>
+        </div>	
+</div>
+<div class="span3">
+
+	<div class="control-group{% if form.errors.post %} error{% endif %}">
+            <label class="control-label"  for="rental_st_day">{{ _('Start Day:') }}</label>
+            <div class="controls"  >
+
+                {{ form.rental_st_day(cols = 2, rows = 3, class = "span1")  }}
+
+                {% for error in form.errors.rental_st_day %}
+                    <span class="help-inline">[{{error}}]</span><br>
+                {% endfor %}
+            </div>
+
+        </div>	
+
+
+
+</div>
+<div class="span3">
+
+	<div class="control-group{% if form.errors.post %} error{% endif %}">
+            <label class="control-label"  for="rental_end_day">{{ _('End Day:') }}</label>
+            <div class="controls"  >
+		
+                {{ form.rental_end_day(cols = 4, rows = 2, class = "span1")  }}
+		
+                {% for error in form.errors.rental_end_day %}
+                    <span class="help-inline">[{{error}}]</span><br>
+                {% endfor %}
+            </div>
+
+        </div>	
+</div>
+
+<div class="span2">
+
+
+        <div class="control-group{% if form.errors.post %} error{% endif %}">
+            <label class="control-label"  for="rental_car_rate">{{ _('Daily Rate:') }}</label>
+            <div class="controls" >
+
+                {{  form.rental_car_rate(cols = 1, rows = 1, class = "span1") }}
+                {% for error in form.errors.rental_car_rate %}
+                    <span class="help-inline">[{{error}}]</span><br>
+                {% endfor %}
+            </div>
+        </div>
+        </div>
+        </div>
+
+
+<div class="row">
+<div class="span2">
+
+	<div class="control-group{% if form.errors.post %} error{% endif %}">
+            <label class="control-label"  for="is_mileage">{{ _('Mileage Expense:') }}</label>
+            <div class="controls"  input type="checkbox">
+
+                {{ form.is_mileage(cols = 3, rows = 2, class = "span2")  }}
+
+                {% for error in form.errors.is_miles %}
+                    <span class="help-inline">[{{error}}]</span><br>
+                {% endfor %}
+            </div>
+        </div>	
+</div>
+<div class="span3">
+
+	<div class="control-group{% if form.errors.post %} error{% endif %}">
+            <label class="control-label"  for="commute_st_day">{{ _('Start Day:') }}</label>
+            <div class="controls"  >
+
+                {{ form.commute_st_day(cols = 3, rows = 2, class = "span1")  }}
+
+                {% for error in form.errors.commute_st_day %}
+                    <span class="help-inline">[{{error}}]</span><br>
+                {% endfor %}
+            </div>
+
+        </div>	
+</div>
+<div class="span3">
+
+	<div class="control-group{% if form.errors.post %} error{% endif %}">
+            <label class="control-label"  for="commute_end_day">{{ _('End Day:') }}</label>
+            <div class="controls"  >
+
+                {{ form.commute_end_day(cols = 4, rows = 2, class = "span1")  }}
+
+                {% for error in form.errors.commute_end_day %}
+                    <span class="help-inline">[{{error}}]</span><br>
+                {% endfor %}
+            </div>
+
+        </div>	
+</div>
+</div>
+<div class="row">
+
+<div class="span2 offset2">
+<div class="control-group{% if form.errors.post %} error{% endif %}">
+            <label class="control-label" for="daily_milies">{{ _('Daily Miles:') }}</label>
+            <div class="controls">
+                {{ form.daily_miles(cols = 1, rows = 2, class = "span1") }}
+                {% for error in form.errors.daily_miles %}
+                    <span class="help-inline">[{{error}}]</span><br>
+                {% endfor %}
+            </div>
+        </div>
+
+	
+</div>
+<div class="span2 offset1">
+        <div class="control-group{% if form.errors.post %} error{% endif %}">
+            <label class="control-label" for="mileage_rate">{{ _('Mileage Rate:') }}</label>
+            <div class="controls">
+                {{ form.mileage_rate(cols = 1, rows = 2, class = "span1") }}
+                {% for error in form.errors.mileage_rate %}
+                    <span class="help-inline">[{{error}}]</span><br>
+                {% endfor %}
+            </div>
+        </div>
+
+</div>
+
+        </div>
+<div class="row">
+<div class="span2">
+
+	<div class="control-group{% if form.errors.post %} error{% endif %}">
+            <label class="control-label"  for="is_hotel">{{ _('Hotel Stay:') }}</label>
+            <div class="controls"  input type="checkbox">
+
+                {{ form.is_hotel(cols = 3, rows = 2, class = "span2")  }}
+
+                {% for error in form.errors.is_hotel %}
+                    <span class="help-inline">[{{error}}]</span><br>
+                {% endfor %}
+            </div>
+        </div>	
+</div>
+<div class="span3">
+
+	<div class="control-group{% if form.errors.post %} error{% endif %}">
+            <label class="control-label"  for="hotel_st_day">{{ _('Start Day:') }}</label>
+            <div class="controls"  >
+
+                {{ form.hotel_st_day(cols = 3, rows = 2, class = "span1")  }}
+
+                {% for error in form.errors.hotel_st_day %}
+                    <span class="help-inline">[{{error}}]</span><br>
+                {% endfor %}
+            </div>
+
+        </div>	
+</div>
+<div class="span3">
+
+	<div class="control-group{% if form.errors.post %} error{% endif %}">
+            <label class="control-label"  for="hotel_end_day">{{ _('End Day:') }}</label>
+            <div class="controls"  >
+
+                {{ form.hotel_end_day(cols = 4, rows = 2, class = "span1")  }}
+
+                {% for error in form.errors.hotel_end_day %}
+                    <span class="help-inline">[{{error}}]</span><br>
+                {% endfor %}
+            </div>
+
+        </div>	
+</div>
+</div>
+<div class="row">
+<div class="span2 offset2">
+
+
+
+        <div class="control-group{% if form.errors.post %} error{% endif %}">
+            <label class="control-label" for="hotel_rate">{{ _('Nightly Rate:') }}</label>
+            <div class="controls">
+                {{  form.hotel_rate(cols = 1, rows = 1, class = "span1")}}
+                {% for error in form.errors.hotel_rate %}
+                    <span class="help-inline">[{{error}}]</span><br>
+                {% endfor %}
+            </div>
+        </div>
+
+        </div>
+
+<div class="span2 offset1">
+
+        <div class="control-group{% if form.errors.post %} error{% endif %}">
+            <label class="control-label" for="daily_expense">{{ _('Daily Expense:') }}</label>
+            <div class="controls">
+                {{  form.daily_expense(cols = 1, rows = 1, class = "span1")}}
+                {% for error in form.errors.daily_expense %}
+                    <span class="help-inline">[{{error}}]</span><br>
+                {% endfor %}
+            </div>
+        </div>
+
+
+        </div>
+
+        </div>
+<div class="row">
+<div class="span2">
+
+	<div class="control-group{% if form.errors.post %} error{% endif %}">
+            <label class="control-label"  for="is_flight">{{ _('Flight Trip:') }}</label>
+            <div class="controls"  input type="checkbox">
+
+                {{ form.is_flight(cols = 3, rows = 2, class = "span2")  }}
+
+                {% for error in form.errors.is_flight %}
+                    <span class="help-inline">[{{error}}]</span><br>
+                {% endfor %}
+            </div>
+        </div>	
+</div>
+<div class="span2">
+	
+        <div class="control-group{% if form.errors.post %} error{% endif %}">
+            <label class="control-label" for="flight_ticket">{{ _('Round Trip Ticket:') }}</label>
+            <div class="controls">
+                {{ form.flight_ticket(cols = 1, rows = 2, class = "span1") }}
+                {% for error in form.errors.flight_ticket %}
+                    <span class="help-inline">[{{error}}]</span><br>
+                {% endfor %}
+            </div>
+        </div>
+
+        </div>
+        </div>
+
+<div class="row">
+<div class="span2">
+
+	<div class="control-group{% if form.errors.post %} error{% endif %}">
+            <label class="control-label"  for="is_airport_pickup">{{ _('Airport Pickup & Dropoff:') }}</label>
+            <div class="controls"  input type="checkbox">
+
+                {{ form.is_airport_pickup(cols = 3, rows = 2, class = "span2")  }}
+
+                {% for error in form.errors.is_airport_pickup %}
+                    <span class="help-inline">[{{error}}]</span><br>
+                {% endfor %}
+            </div>
+        </div>	
+</div>
+<div class="span2">
+        <div class="control-group{% if form.errors.post %} error{% endif %}">
+            <label class="control-label" for="airport_pickup">{{ _('Pickup & Dropoff Charge:') }}</label>
+            <div class="controls">
+                {{ form.airport_pickup(cols = 1, rows = 2, class = "span1") }}
+                {% for error in form.errors.airport_pickup %}
+                    <span class="help-inline">[{{error}}]</span><br>
+                {% endfor %}
+            </div>
+        </div>
+
+</div>
+
+        </div>
+
+
+<div class="row">
+<div class="span2">
+
+
+        <div class="control-group{% if form.errors.post %} error{% endif %}">
+            <label class="control-label" for="income">{{ _('Total Income:') }}</label>
+            <div class="controls">
+                {{ form.income(ReadOnly = True, class = "span2") }} 
+                {% for error in form.errors.income %}
+                    <span class="help-inline">[{{error}}]</span><br>
+                {% endfor %}
+            </div>
+        </div>
+</div>
+<div class="span1 offset2">
+
+        <div class="control-group{% if form.errors.post %} error{% endif %}">
+            <label class="control-label" for="expense">{{ _('Total Expense:') }}</label>
+            <div class="controls">
+                {{ form.expense( ReadOnly =True,class = "span2") }}
+                {% for error in form.errors.expense %}
+                    <span class="help-inline">[{{error}}]</span><br>
+                {% endfor %}
+            </div>
+        </div>
+
+    </div>
+<div class="span2 offset3">
+	<a href="javascript:calculate_expense();">{{ _('Calculate') }}</a>
+</div>
+  </div>
+
+	
+        <div class="control-group">
+            <div class="controls">
+                 <input class="btn btn-primary" type="submit" value="{{ _('Save') }}"><a href="{{ url_for('contracts_list') }}"> <input class="btn" type="button" value="{{ _('Close') }}"></a><a href="javascript:update_deductions();"><input class="btn btn-primary" type="button" value="{{ _('Update') }}"></a>
+<a href="javascript:back_rate_input();"><input class="btn btn-primary" type="button" value="{{ _('Back') }}"></a>
+            </div>
+        </div>
+
+
+    </form>
+</div>
+
+</form>
+
+
+{% endblock %}

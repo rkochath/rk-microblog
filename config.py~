@@ -3,8 +3,8 @@ import os
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 CSRF_ENABLED = True
-SECRET_KEY = 'you-will-never-guess'
-OAUTH_ENABLED = True 
+SECRET_KEY = '\x88\xb2\x96\x1d\x89\x85\xa0^\xa6\xe1n\xee\xfd\xc2\xa3[\xda\x08\x03La/@E'
+OAUTH_ENABLED = False 
 
 OPENID_PROVIDERS = [
     { 'name': 'Google', 'url': 'https://www.google.com/accounts/o8/id' },
@@ -21,7 +21,7 @@ SQLALCHEMY_MIGRATE_REPO = os.path.join(basedir, 'db_repository')
 GEOIPDIR = os.path.join(basedir, 'geoip')
 SQLALCHEMY_RECORD_QUERIES = True
 WHOOSH_BASE = os.path.join(basedir, 'search.db')
-GEOIP_CITYDB = os.path.join(GEOIPDIR, 'search.db')
+GEOIP_CITYDB = os.path.join(GEOIPDIR, 'GeoLiteCity.dat')
 
 
 # Whoosh does not work on Heroku
