@@ -1,5 +1,6 @@
 from flask.ext.wtf import Form
 from wtforms import TextField, BooleanField, TextAreaField, IntegerField,DecimalField,HiddenField,SelectField
+from wtforms.widgets import HiddenInput
 #from wtforms_components  import read_only
 from wtforms.ext.dateutil.fields import DateField, DateTimeField
 from wtforms.validators import Required, Length
@@ -42,7 +43,7 @@ class SearchForm(Form):
     search = TextField('search', validators = [Required()])
 
 class RateCalcForm(Form):
-    id = IntegerField('id')
+    id = IntegerField('id',widget=HiddenInput())
     #id = IntegerField('id')		
     start_date = DateField('start_date', validators = [Required()], display_format='%m-%d-%Y')
     end_date = DateField('end_date', validators = [Required()], display_format='%m-%d-%Y')
