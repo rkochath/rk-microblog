@@ -54,7 +54,7 @@ class RateCalcForm(Form):
 
     work_hours = DecimalField('work_hours', validators = [Required()],places=2)
 #    exclude_nth = SelectField('exclude_nth', choices=[('1', 'Every'), ('2', '2nd'), ('3', '3rd'),('4', '4th'),('5', '5th'),('6', '6th'),('7', '7th'),('8', '8th'),('9', '9th'),('10', '10th')])
-    exclude_nth = SelectField('exclude_nth',choices=[('', 'Select'),('1', 'Every')])
+    exclude_nth = SelectField('exclude_nth',choices=[(0, 'Select'),(1, 'Every')])
 
     exclude_day = SelectField('exclude_day', choices=[('SU', 'SU'), ('MO', 'MO'), ('TU', 'TU'),('WE', 'WE'),('TH', 'TH'),('FR', 'FR'),('SA', 'SA')])
 

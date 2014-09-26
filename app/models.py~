@@ -106,7 +106,8 @@ class Contracts(db.Model):
     exclude_day = db.Column(db.String(2))
 
     income = db.Column(db.Numeric(12,2))
-    
+    expense = db.Column(db.Numeric(12,2))   
+
 
     is_rent_acar=db.Column(db.Boolean)
     rental_st_day=db.Column(db.String(2))
@@ -133,8 +134,7 @@ class Contracts(db.Model):
     mileage_rate = db.Column(db.Numeric(6,2))
     timestamp = db.Column(db.DateTime)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    expense = db.Column(db.Numeric(12,2))   
-    
+        
     def __repr__(self): # pragma: no cover
         return '<Contract %r>' % (self.description)
 

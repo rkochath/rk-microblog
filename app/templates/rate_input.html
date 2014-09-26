@@ -141,26 +141,46 @@
         <div class="control-group">
             <div class="controls">
                  <input class="btn btn-primary" type="submit" value="{{ _('Save') }}"><a href="{{ url_for('contracts_list') }}"> <input class="btn" type="button" value="{{ _('Close') }}"></a><a href="javascript:save_contract();"><input class="btn btn-primary" type="button" value="{{ _('Update') }}"></a>
-<input id=deduct class="btn" type="button" value="{{ _('Enter Deductions') }}">
-
+<input class="btn" id=deduct type="button" value="{{ _('Enter Deductions') }}">
             </div>
         </div>
 
 
 <script>
+
 $( document ).ready(function(){
    $( "#deduct" ).click(function() {
+//	var contract_id = save_contract();
+//	console.log("Id from the post"+contract_id)
+//	var url = (contract_id != -1) ? flask_util.url_for('rate_input_deductions' ,{ contract_str:$( "#rate_input_form"  ).serialize//()}): flask_util.url_for( 'contracts_list' );
+/*
+		var id = document.getElementById('id');
+		var start_date = document.getElementById('start_date');
+		var end_date = document.getElementById('end_date');
+		var no_vacations = document.getElementById('no_vacations');	
+		var no_holidays = document.getElementById('no_holidays');	
+		var no_sickdays = document.getElementById('no_sickdays');	
+		var hourly_rate = document.getElementById('hourly_rate');	
+		var work_hours = document.getElementById('work_hours');
+		var exclude_nth = document.getElementById('exclude_nth');	
+		var exclude_day = document.getElementById('exclude_day');		
 
-	var contract_id = save_contract();
-	//save_contract();
-	
-	//var contract_id = document.getElementById('id');
-	alert("Open deductions form for "+ contract_id + "(:"); 
-	//var str_form = $( "form" ).serialize();
-	//var url = flask_util.url_for('rate_input_deductions' ,{ contract_str:$( "form" ).serialize();});
-        //var url = flask_util.url_for('rate_input_deductions' ,{ contract_str:str_form});
-	var url = flask_util.url_for('rate_input_deductions' ,{ contract_str:contract_id});
-	
+		var contract_str={id:id.value,
+		    start_date:start_date.value,
+		    end_date:end_date.value,
+		    no_vacations:no_vacations.value,
+		    no_holidays:no_holidays.value,
+		    no_sickdays:no_sickdays.value,
+		    hourly_rate:hourly_rate.value,
+		    work_hours:work_hours.value,
+		    exclude_nth:exclude_nth.value,	
+		    exclude_day:exclude_day.value} 	;
+		
+*/
+
+
+        var url =  flask_util.url_for('save_contract' ,{ contract_str:$( "#rate_input_form"  ).serialize()});
+	//var url =  flask_util.url_for('save_contract' ,{ contract_str:str(contract_str)});
 	$(location).attr('href',url);		
     });
 });

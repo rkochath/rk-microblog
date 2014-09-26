@@ -42,7 +42,7 @@ class SearchForm(Form):
     search = TextField('search', validators = [Required()])
 
 class RateCalcForm(Form):
-    id = HiddenField('id')
+    id = IntegerField('id')
     #id = IntegerField('id')		
     start_date = DateField('start_date', validators = [Required()], display_format='%m-%d-%Y')
     end_date = DateField('end_date', validators = [Required()], display_format='%m-%d-%Y')

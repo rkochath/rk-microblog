@@ -2,7 +2,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>{{ _('Calculate contract expense') }}</h1>
+<h1>{{ _('Calculate contract income') }}</h1>
 {% include 'flash.html' %}
 
 

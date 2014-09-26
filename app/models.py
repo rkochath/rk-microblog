@@ -90,7 +90,7 @@ class Post(db.Model):
         return '<Post %r>' % (self.body)
 
 class Contracts(db.Model):
-    id = db.Column(db.Integer, primary_key = True)
+    id = db.Column(db.Integer, primary_key = True,autoincrement=True)
     description = db.Column(db.String(140))
     
     start_date = db.Column(db.Date)
