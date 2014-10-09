@@ -1,0 +1,524 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+ <!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="well">
+  <h3>Contracts Comparison</h3>
+</div>
+</div>
+
+<div class="container">
+<div class="row">
+  <div class="col-md-4">
+
+
+
+
+    <h2>{{contract1.description}}</h2>
+    
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Key</th>
+          <th>Value</th>
+          <th>Key</th>
+          <th>Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>{{ _('Start') }}</td>
+          <td>{{contract1.start_date}}</td>
+          <td>{{ _('End') }}</td>
+          <td>{{contract1.end_date}}</td>
+        </tr>
+        <tr>
+          <td>{{ _('Total Days ') }}</td>
+          <td>{{31}}</td>
+          <td> </td>
+          <td> </td>
+        </tr>
+        <tr>
+          <td>{{ _('Weekends ') }}</td>
+          <td>{{8}}</td>
+          <td> </td>
+          <td> </td>
+        </tr>
+        <tr>
+          <td>{{ _('Vacations ') }}</td>
+          <td>{{contract1.no_vacations}}</td>
+          <td> </td>
+          <td> </td>
+        </tr>
+        <tr>
+          <td>{{ _('Holidays ') }}</td>
+          <td>{{contract1.no_holidays}}</td>
+          <td> </td>
+          <td> </td>
+        </tr>
+        <tr>
+          <td>{{ _('Sickdays ') }}</td>
+          <td>{{contract1.no_holidays}}</td>
+          <td> </td>
+          <td> </td>
+        </tr>
+
+        <tr>
+          <td>{{ _('Exclude Days ') }}</td>
+          <td>{{contract1.exclude_nth}}</td>
+          <td>{{contract1.exclude_day}} </td>
+          <td> </td>
+        </tr>
+
+        <tr>
+          <td>{{ _('Day Excluded ') }}</td>
+          <td>{{4}}</td>
+          <td> </td>
+          <td> </td>
+        </tr>
+
+        <tr>
+          <td>{{ _('Total Working Days ') }}</td>
+          <td>{{18}}</td>
+          <td> </td>
+          <td> </td>
+        </tr>
+
+        <tr>
+          <td>{{ _('Hourly Rate ') }}</td>
+          <td>{{contract1.hourly_rate}}</td>
+          <td>{{ _('Working Hours     : ') }} </td>
+          <td>{{contract1.work_hours}} </td>
+        </tr>
+
+        <tr>
+          <td>{{ _('Total Income ') }}</td>
+          <td>{{{contract1.income}}</td>
+          <td> </td>
+          <td>  </td>
+        </tr>
+        
+      </tbody>
+    </table>
+    
+    
+    <p>{{ _('Rent a Car:') }}{{contract1.is_rent_acar}}</p>
+    <p>{{ _('Rental Start:') }}{{contract1.rental_st_day}}</p>
+    <p>{{ _('Rental End:') }}{{contract1.rental_end_day}}</p>
+    <p>{{ _('Rental Rate:') }}{{contract1.rental_car_rate}}</p>
+    <p>{{ _('Hotel:') }}{{contract1.is_hotel}}</p>
+    <p>{{ _('Hotel Start:') }}{{contract1.hotel_st_day}}</p>
+    <p>{{ _('Hotel End:') }}{{contract1.hotel_end_day}}</p>
+    <p>{{ _('Hotel Rate:') }}{{contract1.hotel_rate}}</p>
+    <p>{{ _('Daily Expense:') }}{{contract1.daily_expense}}</p>
+    <p>{{ _('Flight:') }}{{contract1.is_flight}}</p>
+    <p>{{ _('Flight Ticket:') }}{{contract1.flight_ticket}}</p>
+    <p>{{ _('Airport pickup/Dropoff:') }}{{contract1.is_airport_pickup}}</p>
+    <p>{{ _('Mileage:') }}{{contract1.is_mileage}}</p>
+    <p>{{ _('Commute Start:') }}{{contract1.commute_st_day}}</p>
+    <p>{{ _('Commute End:') }}{{contract1.commute_end_day}}</p>
+    <p>{{ _('Daily Miles:') }}{{contract1.daily_miles}}</p>
+    <p>{{ _('Mileage Rate:') }}{{contract1.mileage_rate}}</p>
+    <p>{{ _('Total Expense:') }}{{contract1.expense}}</p>
+
+    <p>{{ _('HSA Contr:') }}{{contract1.hsa_contr}}</p>
+    <p>{{ _('HSA Contr Freq:') }}{{contract1.hsa_contr_freq}}</p>
+    <p>{{ _('HSA Contr Pre Tax:') }}{{contract1.is_hsa_cont_pre_tax}}</p>
+    
+    <p>{{ _('Retirement Contr:') }}{{contract1.retirement_contr}}</p>
+    <p>{{ _('Retirement Contr Freq:') }}{{contract1.retirement_contr_freq}}</p>
+    <p>{{ _('Retirement Contr Pre Tax:') }}{{contract1.is_retirement_cont_pre_tax}}</p>
+    
+    <p>{{ _('Health Ins Prem:') }}{{contract1.health_ins_prem}}</p>
+    <p>{{ _('Health Ins Freq:') }}{{contract1.health_ins_freq}}</p>
+    <p>{{ _('Health Ins Pre Tax:') }}{{contract1.is_health_pre_tax}}</p>
+
+    <p>{{ _('Vision Ins Prem:') }}{{contract1.vision_ins_prem}}</p>
+    <p>{{ _('Vision Ins Freq:') }}{{contract1.vision_ins_freq}}</p>
+    <p>{{ _('Vision Ins Pre Tax:') }}{{contract1.is_vision_pre_tax}}</p>
+    
+    <p>{{ _('Dental Ins Prem:') }}{{contract1.dental_ins_prem}}</p>
+    <p>{{ _('Dental Ins Freq:') }}{{contract1.dental_ins_freq}}</p>
+    <p>{{ _('Dental Ins Pre Tax:') }}{{contract1.is_dental_pre_tax}}</p>
+
+    <p>{{ _('STD Dis Prem:') }}{{contract1.shortterm_dis_contr}}</p>
+    <p>{{ _('STD Dis Freq:') }}{{contract1.shortterm_dis_freq}}</p>
+    <p>{{ _('STD Dis Pre Tax:') }}{{contract1.is_shortterm_pre_tax}}</p>
+    <p>{{ _('LTD Dis Prem:') }}{{contract1.longterm_dis_contr}}</p>
+    <p>{{ _('LTD Dis Freq:') }}{{contract1.longterm_dis_freq}}</p>
+    <p>{{ _('LTD Dis Pre Tax:') }}{{contract1.is_longterm_pre_tax}}</p>
+    
+    <p>{{ _('Life Ins Prem:') }}{{contract1.life_ins_prem}}</p>
+    <p>{{ _('Life Ins Freq:') }}{{contract1.life_ins_freq}}</p>
+    <p>{{ _('Life Ins Pre Tax:') }}{{contract1.is_life_pre_tax}}</p>
+    <p>{{ _('Total Other Deductions:') }}{{contract1.other_deductions}}</p>
+
+    <p>{{ _('Fed Tax Rate:') }}{{contract1.fed_tax_perc}}</p>
+    <p>{{ _('Fed Tax:') }}{{contract1.fed_tax}}</p>
+
+    <p>{{ _('State Tax Rate:') }}{{contract1.state_tax_perc}}</p>
+    <p>{{ _('State Tax:') }}{{contract1.state_tax}}</p>
+
+    <p>{{ _('SSN Tax Rate:') }}{{contract1.ssn_tax_perc}}</p>
+    <p>{{ _('SSN Tax:') }}{{contract1.ssn_tax}}</p>
+    
+    <p>{{ _('Self Emp Tax Rate:') }}{{contract1.self_emp_tax_perc}}</p>
+    <p>{{ _('Self Emp Tax:') }}{{contract1.self_emp_tax}}</p>
+
+    <p>{{ _('Medicare Tax Rate:') }}{{contract1.medicare_tax_perc}}</p>
+    <p>{{ _('Medicare Tax:') }}{{contract1.medicare_tax}}</p>
+
+    <p>{{ _('Total Taxes:') }}{{contract1.taxes}}</p>
+
+    
+  </div>
+  <div class="col-md-4">
+    <h2>{{contract2.description}}</h2>
+    
+        <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Key</th>
+          <th>Value</th>
+          <th>Key</th>
+          <th>Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>{{ _('Start') }}</td>
+          <td>{{contract2.start_date}}</td>
+          <td>{{ _('End') }}</td>
+          <td>{{contract2.end_date}}</td>
+        </tr>
+        <tr>
+          <td>{{ _('Total Days ') }}</td>
+          <td>{{31}}</td>
+          <td> </td>
+          <td> </td>
+        </tr>
+        <tr>
+          <td>{{ _('Weekends ') }}</td>
+          <td>{{8}}</td>
+          <td> </td>
+          <td> </td>
+        </tr>
+        <tr>
+          <td>{{ _('Vacations ') }}</td>
+          <td>{{contract2.no_vacations}}</td>
+          <td> </td>
+          <td> </td>
+        </tr>
+        <tr>
+          <td>{{ _('Holidays ') }}</td>
+          <td>{{contract2.no_holidays}}</td>
+          <td> </td>
+          <td> </td>
+        </tr>
+        <tr>
+          <td>{{ _('Sickdays ') }}</td>
+          <td>{{contract2.no_holidays}}</td>
+          <td> </td>
+          <td> </td>
+        </tr>
+
+        <tr>
+          <td>{{ _('Exclude Days ') }}</td>
+          <td>{{contract2.exclude_nth}}</td>
+          <td>{{contract2.exclude_day}} </td>
+          <td> </td>
+        </tr>
+
+        <tr>
+          <td>{{ _('Day Excluded ') }}</td>
+          <td>{{4}}</td>
+          <td> </td>
+          <td> </td>
+        </tr>
+
+        <tr>
+          <td>{{ _('Total Working Days ') }}</td>
+          <td>{{18}}</td>
+          <td> </td>
+          <td> </td>
+        </tr>
+
+        <tr>
+          <td>{{ _('Hourly Rate ') }}</td>
+          <td>{{contract2.hourly_rate}}</td>
+          <td>{{ _('Working Hours     : ') }} </td>
+          <td>{{contract2.work_hours}} </td>
+        </tr>
+
+        <tr>
+          <td>{{ _('Total Income ') }}</td>
+          <td>{{{contract2.income}}</td>
+          <td> </td>
+          <td>  </td>
+        </tr>
+        
+      </tbody>
+    </table>
+
+    
+
+    <p>{{ _('Rent a Car:') }}{{contract2.is_rent_acar}}</p>
+    <p>{{ _('Rental Start:') }}{{contract2.rental_st_day}}</p>
+    <p>{{ _('Rental End:') }}{{contract2.rental_end_day}}</p>
+    <p>{{ _('Rental Rate:') }}{{contract2.rental_car_rate}}</p>
+    <p>{{ _('Hotel:') }}{{contract2.is_hotel}}</p>
+    <p>{{ _('Hotel Start:') }}{{contract2.hotel_st_day}}</p>
+    <p>{{ _('Hotel End:') }}{{contract2.hotel_end_day}}</p>
+    <p>{{ _('Hotel Rate:') }}{{contract2.hotel_rate}}</p>
+    <p>{{ _('Daily Expense:') }}{{contract2.daily_expense}}</p>
+    <p>{{ _('Flight:') }}{{contract2.is_flight}}</p>
+    <p>{{ _('Flight Ticket:') }}{{contract2.flight_ticket}}</p>
+    <p>{{ _('Airport pickup/Dropoff:') }}{{contract2.is_airport_pickup}}</p>
+    <p>{{ _('Mileage:') }}{{contract2.is_mileage}}</p>
+    <p>{{ _('Commute Start:') }}{{contract2.commute_st_day}}</p>
+    <p>{{ _('Commute End:') }}{{contract2.commute_end_day}}</p>
+    <p>{{ _('Daily Miles:') }}{{contract2.daily_miles}}</p>
+    <p>{{ _('Mileage Rate:') }}{{contract2.mileage_rate}}</p>
+    <p>{{ _('Total Expense:') }}{{contract2.expense}}</p>
+
+    <p>{{ _('HSA Contr:') }}{{contract2.hsa_contr}}</p>
+    <p>{{ _('HSA Contr Freq:') }}{{contract2.hsa_contr_freq}}</p>
+    <p>{{ _('HSA Contr Pre Tax:') }}{{contract2.is_hsa_cont_pre_tax}}</p>
+    
+    <p>{{ _('Retirement Contr:') }}{{contract2.retirement_contr}}</p>
+    <p>{{ _('Retirement Contr Freq:') }}{{contract2.retirement_contr_freq}}</p>
+    <p>{{ _('Retirement Contr Pre Tax:') }}{{contract2.is_retirement_cont_pre_tax}}</p>
+    
+    <p>{{ _('Health Ins Prem:') }}{{contract2.health_ins_prem}}</p>
+    <p>{{ _('Health Ins Freq:') }}{{contract2.health_ins_freq}}</p>
+    <p>{{ _('Health Ins Pre Tax:') }}{{contract2.is_health_pre_tax}}</p>
+
+    <p>{{ _('Vision Ins Prem:') }}{{contract2.vision_ins_prem}}</p>
+    <p>{{ _('Vision Ins Freq:') }}{{contract2.vision_ins_freq}}</p>
+    <p>{{ _('Vision Ins Pre Tax:') }}{{contract2.is_vision_pre_tax}}</p>
+    
+    <p>{{ _('Dental Ins Prem:') }}{{contract2.dental_ins_prem}}</p>
+    <p>{{ _('Dental Ins Freq:') }}{{contract2.dental_ins_freq}}</p>
+    <p>{{ _('Dental Ins Pre Tax:') }}{{contract2.is_dental_pre_tax}}</p>
+
+    <p>{{ _('STD Dis Prem:') }}{{contract2.shortterm_dis_contr}}</p>
+    <p>{{ _('STD Dis Freq:') }}{{contract2.shortterm_dis_freq}}</p>
+    <p>{{ _('STD Dis Pre Tax:') }}{{contract2.is_shortterm_pre_tax}}</p>
+    <p>{{ _('LTD Dis Prem:') }}{{contract2.longterm_dis_contr}}</p>
+    <p>{{ _('LTD Dis Freq:') }}{{contract2.longterm_dis_freq}}</p>
+    <p>{{ _('LTD Dis Pre Tax:') }}{{contract2.is_longterm_pre_tax}}</p>
+    
+    <p>{{ _('Life Ins Prem:') }}{{contract2.life_ins_prem}}</p>
+    <p>{{ _('Life Ins Freq:') }}{{contract2.life_ins_freq}}</p>
+    <p>{{ _('Life Ins Pre Tax:') }}{{contract2.is_life_pre_tax}}</p>
+    <p>{{ _('Total Other Deductions:') }}{{contract2.other_deductions}}</p>
+
+    <p>{{ _('Fed Tax Rate:') }}{{contract2.fed_tax_perc}}</p>
+    <p>{{ _('Fed Tax:') }}{{contract2.fed_tax}}</p>
+
+    <p>{{ _('State Tax Rate:') }}{{contract2.state_tax_perc}}</p>
+    <p>{{ _('State Tax:') }}{{contract2.state_tax}}</p>
+
+    <p>{{ _('SSN Tax Rate:') }}{{contract2.ssn_tax_perc}}</p>
+    <p>{{ _('SSN Tax:') }}{{contract2.ssn_tax}}</p>
+    
+    <p>{{ _('Self Emp Tax Rate:') }}{{contract2.self_emp_tax_perc}}</p>
+    <p>{{ _('Self Emp Tax:') }}{{contract2.self_emp_tax}}</p>
+
+    <p>{{ _('Medicare Tax Rate:') }}{{contract2.medicare_tax_perc}}</p>
+    <p>{{ _('Medicare Tax:') }}{{contract2.medicare_tax}}</p>
+
+    <p>{{ _('Total Taxes:') }}{{contract2.taxes}}</p>
+    
+  </div>
+  <div class="col-md-4">
+    <h2>{{contract3.description}}</h2>
+        <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Key</th>
+          <th>Value</th>
+          <th>Key</th>
+          <th>Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>{{ _('Start') }}</td>
+          <td>{{contract3.start_date}}</td>
+          <td>{{ _('End') }}</td>
+          <td>{{contract3.end_date}}</td>
+        </tr>
+        <tr>
+          <td>{{ _('Total Days ') }}</td>
+          <td>{{31}}</td>
+          <td> </td>
+          <td> </td>
+        </tr>
+        <tr>
+          <td>{{ _('Weekends ') }}</td>
+          <td>{{8}}</td>
+          <td> </td>
+          <td> </td>
+        </tr>
+        <tr>
+          <td>{{ _('Vacations ') }}</td>
+          <td>{{contract3.no_vacations}}</td>
+          <td> </td>
+          <td> </td>
+        </tr>
+        <tr>
+          <td>{{ _('Holidays ') }}</td>
+          <td>{{contract3.no_holidays}}</td>
+          <td> </td>
+          <td> </td>
+        </tr>
+        <tr>
+          <td>{{ _('Sickdays ') }}</td>
+          <td>{{contract3.no_holidays}}</td>
+          <td> </td>
+          <td> </td>
+        </tr>
+
+        <tr>
+          <td>{{ _('Exclude Days ') }}</td>
+          <td>{{contract3.exclude_nth}}</td>
+          <td>{{contract3.exclude_day}} </td>
+          <td> </td>
+        </tr>
+
+        <tr>
+          <td>{{ _('Day Excluded ') }}</td>
+          <td>{{4}}</td>
+          <td> </td>
+          <td> </td>
+        </tr>
+
+        <tr>
+          <td>{{ _('Total Working Days ') }}</td>
+          <td>{{18}}</td>
+          <td> </td>
+          <td> </td>
+        </tr>
+
+        <tr>
+          <td>{{ _('Hourly Rate ') }}</td>
+          <td>{{contract3.hourly_rate}}</td>
+          <td>{{ _('Working Hours     : ') }} </td>
+          <td>{{contract3.work_hours}} </td>
+        </tr>
+
+        <tr>
+          <td>{{ _('Total Income ') }}</td>
+          <td>{{{contract3.income}}</td>
+          <td> </td>
+          <td>  </td>
+        </tr>
+        
+      </tbody>
+    </table>
+
+    
+    <p>{{ _('Start:') }}{{contract3.start_date}}</p>
+    <p>{{ _('End:') }} {{contract3.end_date}}</p>
+    <p>{{ _('No. of Vacations:') }}{{contract3.no_vacations}}</p>
+    <p>{{ _('No. of Holidays:') }}{{contract3.no_holidays}}</p>
+    <p>{{ _('No. of Sickdays:') }} {{contract3.no_sickdays}}</p>
+    <p>{{ _('Hourly Rate:') }}{{contract3.hourly_rate}}</p>
+    <p>{{ _('Working Hours:') }}{{contract3.working_hours}}</p>
+    
+    <p>{{ _('Exclude nth:') }}{{contract3.exclude_nth}}</p>
+    <p>{{ _('Exclude Day:') }}{{contract3.exclude_day}}</p>
+    <p>{{ _('Total Income:') }}{{contract3.income}}</p>
+    
+    <p>{{ _('Rent a Car:') }}{{contract3.is_rent_acar}}</p>
+    <p>{{ _('Rental Start:') }}{{contract3.rental_st_day}}</p>
+    <p>{{ _('Rental End:') }}{{contract3.rental_end_day}}</p>
+    <p>{{ _('Rental Rate:') }}{{contract3.rental_car_rate}}</p>
+    <p>{{ _('Hotel:') }}{{contract3.is_hotel}}</p>
+    <p>{{ _('Hotel Start:') }}{{contract3.hotel_st_day}}</p>
+    <p>{{ _('Hotel End:') }}{{contract3.hotel_end_day}}</p>
+    <p>{{ _('Hotel Rate:') }}{{contract3.hotel_rate}}</p>
+    <p>{{ _('Daily Expense:') }}{{contract3.daily_expense}}</p>
+    <p>{{ _('Flight:') }}{{contract3.is_flight}}</p>
+    <p>{{ _('Flight Ticket:') }}{{contract3.flight_ticket}}</p>
+    <p>{{ _('Airport pickup/Dropoff:') }}{{contract3.is_airport_pickup}}</p>
+    <p>{{ _('Mileage:') }}{{contract3.is_mileage}}</p>
+    <p>{{ _('Commute Start:') }}{{contract3.commute_st_day}}</p>
+    <p>{{ _('Commute End:') }}{{contract3.commute_end_day}}</p>
+    <p>{{ _('Daily Miles:') }}{{contract3.daily_miles}}</p>
+    <p>{{ _('Mileage Rate:') }}{{contract3.mileage_rate}}</p>
+    <p>{{ _('Total Expense:') }}{{contract3.expense}}</p>
+
+    <p>{{ _('HSA Contr:') }}{{contract3.hsa_contr}}</p>
+    <p>{{ _('HSA Contr Freq:') }}{{contract3.hsa_contr_freq}}</p>
+    <p>{{ _('HSA Contr Pre Tax:') }}{{contract3.is_hsa_cont_pre_tax}}</p>
+    
+    <p>{{ _('Retirement Contr:') }}{{contract3.retirement_contr}}</p>
+    <p>{{ _('Retirement Contr Freq:') }}{{contract3.retirement_contr_freq}}</p>
+    <p>{{ _('Retirement Contr Pre Tax:') }}{{contract3.is_retirement_cont_pre_tax}}</p>
+    
+    <p>{{ _('Health Ins Prem:') }}{{contract3.health_ins_prem}}</p>
+    <p>{{ _('Health Ins Freq:') }}{{contract3.health_ins_freq}}</p>
+    <p>{{ _('Health Ins Pre Tax:') }}{{contract3.is_health_pre_tax}}</p>
+
+    <p>{{ _('Vision Ins Prem:') }}{{contract3.vision_ins_prem}}</p>
+    <p>{{ _('Vision Ins Freq:') }}{{contract3.vision_ins_freq}}</p>
+    <p>{{ _('Vision Ins Pre Tax:') }}{{contract3.is_vision_pre_tax}}</p>
+    
+    <p>{{ _('Dental Ins Prem:') }}{{contract3.dental_ins_prem}}</p>
+    <p>{{ _('Dental Ins Freq:') }}{{contract3.dental_ins_freq}}</p>
+    <p>{{ _('Dental Ins Pre Tax:') }}{{contract3.is_dental_pre_tax}}</p>
+
+    <p>{{ _('STD Dis Prem:') }}{{contract3.shortterm_dis_contr}}</p>
+    <p>{{ _('STD Dis Freq:') }}{{contract3.shortterm_dis_freq}}</p>
+    <p>{{ _('STD Dis Pre Tax:') }}{{contract3.is_shortterm_pre_tax}}</p>
+    <p>{{ _('LTD Dis Prem:') }}{{contract3.longterm_dis_contr}}</p>
+    <p>{{ _('LTD Dis Freq:') }}{{contract3.longterm_dis_freq}}</p>
+    <p>{{ _('LTD Dis Pre Tax:') }}{{contract3.is_longterm_pre_tax}}</p>
+    
+    <p>{{ _('Life Ins Prem:') }}{{contract3.life_ins_prem}}</p>
+    <p>{{ _('Life Ins Freq:') }}{{contract3.life_ins_freq}}</p>
+    <p>{{ _('Life Ins Pre Tax:') }}{{contract3.is_life_pre_tax}}</p>
+    <p>{{ _('Total Other Deductions:') }}{{contract3.other_deductions}}</p>
+    
+    <p>{{ _('Fed Tax Rate:') }}{{contract3.fed_tax_perc}}</p>
+    <p>{{ _('Fed Tax:') }}{{contract3.fed_tax}}</p>
+
+    <p>{{ _('State Tax Rate:') }}{{contract3.state_tax_perc}}</p>
+    <p>{{ _('State Tax:') }}{{contract3.state_tax}}</p>
+
+    <p>{{ _('SSN Tax Rate:') }}{{contract3.ssn_tax_perc}}</p>
+    <p>{{ _('SSN Tax:') }}{{contract3.ssn_tax}}</p>
+    
+    <p>{{ _('Self Emp Tax Rate:') }}{{contract3.self_emp_tax_perc}}</p>
+    <p>{{ _('Self Emp Tax:') }}{{contract3.self_emp_tax}}</p>
+
+    <p>{{ _('Medicare Tax Rate:') }}{{contract3.medicare_tax_perc}}</p>
+    <p>{{ _('Medicare Tax:') }}{{contract3.medicare_tax}}</p>
+
+    <p>{{ _('Total Taxes:') }}{{contract3.taxes}}</p>
+
+
+  </div>
+
+
+</div>
+</div>
+
+</body>
+</html>
+{% endblock %}

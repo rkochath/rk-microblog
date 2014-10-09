@@ -1,0 +1,265 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+<h1>{{ _('Input Taxes ') }}</h1>
+{% include 'flash.html' %}
+
+
+<div class="well">
+	    <form id=input_tax_form class="form-horizontal" action="" method="post" name="post">
+		{{form.hidden_tag()}}
+		<td>{{ form.id }}</td>
+		<td>{{ form.next_step }}</td>
+
+<div class="row">
+
+	<div class="span5">
+
+		<div class="control-group{% if form.errors.post %} error{% endif %}">
+		    <label class="control-label"  for="description">{{ _('Contract Description:') }}</label>
+		    <div class="controls" >
+		        {{ form.description(ReadOnly = True,cols = 1, rows = 1, class = "span4")  }}
+
+		        {% for error in form.errors.description %}
+		            <span class="help-inline">[{{error}}]</span><br>
+		        {% endfor %}
+		    </div>
+		</div>
+	</div>
+
+
+	<div class="span3">
+		<div class="control-group">
+		    <label class="control-label"  for="start_date">{{ _('Start Date:') }}	    </label>            
+		    <div class="controls" >
+
+		        {{ form.start_date(ReadOnly = True,cols = 1, rows = 1, class = "span2")  }}
+
+		        {% for error in form.errors.start_date %}
+		            <span class="help-inline">[{{error}}]</span><br>
+		        {% endfor %}
+		    </div>
+
+		</div>	
+	</div>
+	<div class="span3">
+
+		<div class="control-group">
+		    <label class="control-label"  for="end_date">{{ _('End Date:') }}</label>
+		    <div class="controls" >
+		        {{ form.end_date(ReadOnly = True,cols = 1, rows = 1, class = "span2")  }}
+
+		        {% for error in form.errors.end_date %}
+		            <span class="help-inline">[{{error}}]</span><br>
+		        {% endfor %}
+		    </div>
+		</div>	
+	</div>
+
+	</div>
+
+<div class="row">
+<div class="span1">
+
+	<div class="control-group{% if form.errors.post %} error{% endif %}">
+            <label class="control-label"  for="fed_tax_perc">{{ _('Fed Tax Rate:') }}</label>
+            <div class="controls" >
+
+                {{ form.fed_tax_perc( class = "span1")  }}
+
+                {% for error in form.errors.fed_tax_perc %}
+                    <span class="help-inline">[{{error}}]</span><br>
+                {% endfor %}
+            </div>
+        </div>	
+</div>
+
+<div class="span1 ">
+
+	<div class="control-group{% if form.errors.post %} error{% endif %}">
+            <label class="control-label"  for="fed_tax">{{ _('Fed Tax:') }}</label>
+            <div class="controls" >
+
+                {{ form.fed_tax( ReadOnly =True, class = "span1")  }}
+
+                {% for error in form.errors.fed_tax %}
+                    <span class="help-inline">[{{error}}]</span><br>
+                {% endfor %}
+            </div>
+        </div>	
+</div>
+</div>
+
+<div class="row">
+<div class="span1">
+
+	<div class="control-group{% if form.errors.post %} error{% endif %}">
+            <label class="control-label"  for="state_tax_perc">{{ _('State Tax Rate:') }}</label>
+            <div class="controls" >
+
+                {{ form.state_tax_perc(  class = "span1")  }}
+
+                {% for error in form.errors.state_tax_perc %}
+                    <span class="help-inline">[{{error}}]</span><br>
+                {% endfor %}
+            </div>
+        </div>	
+</div>
+
+<div class="span1 ">
+
+	<div class="control-group{% if form.errors.post %} error{% endif %}">
+            <label class="control-label"  for="state_tax">{{ _('State Tax:') }}</label>
+            <div class="controls" >
+
+                {{ form.state_tax( ReadOnly =True, class = "span1")  }}
+
+                {% for error in form.errors.state_tax %}
+                    <span class="help-inline">[{{error}}]</span><br>
+                {% endfor %}
+            </div>
+        </div>	
+</div>
+
+
+</div>
+
+<div class="row">
+<div class="span1">
+
+	<div class="control-group{% if form.errors.post %} error{% endif %}">
+            <label class="control-label"  for="ssn_tax_perc">{{ _('SSN Tax Rate:') }}</label>
+            <div class="controls" >
+
+                {{ form.ssn_tax_perc( class = "span1")  }}
+
+                {% for error in form.errors.ssn_tax_perc %}
+                    <span class="help-inline">[{{error}}]</span><br>
+                {% endfor %}
+            </div>
+        </div>	
+</div>
+
+<div class="span1">
+
+	<div class="control-group{% if form.errors.post %} error{% endif %}">
+            <label class="control-label"  for="ssn_tax">{{ _('SSN Tax:') }}</label>
+            <div class="controls" >
+
+                {{ form.ssn_tax( ReadOnly =True, class = "span1")  }}
+
+                {% for error in form.errors.ssn_tax %}
+                    <span class="help-inline">[{{error}}]</span><br>
+                {% endfor %}
+            </div>
+        </div>	
+</div>
+
+</div>
+
+
+
+<div class="row">
+<div class="span1">
+
+	<div class="control-group{% if form.errors.post %} error{% endif %}">
+            <label class="control-label"  for="self_emp_tax_perc">{{ _('Self Emp Tax Rate:') }}</label>
+            <div class="controls" >
+
+                {{ form.self_emp_tax_perc( class = "span1")  }}
+
+                {% for error in form.errors.self_emp_tax_perc %}
+                    <span class="help-inline">[{{error}}]</span><br>
+                {% endfor %}
+            </div>
+        </div>	
+</div>
+
+<div class="span1 offset2">
+
+	<div class="control-group{% if form.errors.post %} error{% endif %}">
+            <label class="control-label"  for="self_emp_tax">{{ _('Self Emp Tax:') }}</label>
+            <div class="controls" >
+
+                {{ form.self_emp_tax( ReadOnly =True, class = "span1")  }}
+
+                {% for error in form.errors.self_emp_tax %}
+                    <span class="help-inline">[{{error}}]</span><br>
+                {% endfor %}
+            </div>
+        </div>	
+</div>
+
+</div>
+
+<div class="row">
+<div class="span1">
+
+	<div class="control-group{% if form.errors.post %} error{% endif %}">
+            <label class="control-label"  for="medicare_tax_perc">{{ _('Medicare Tax Rate:') }}</label>
+            <div class="controls" >
+
+                {{ form.medicare_tax_perc( class = "span1")  }}
+
+                {% for error in form.errors.medicare_tax_perc %}
+                    <span class="help-inline">[{{error}}]</span><br>
+                {% endfor %}
+            </div>
+        </div>	
+</div>
+
+<div class="span1 offset2">
+
+	<div class="control-group{% if form.errors.post %} error{% endif %}">
+            <label class="control-label"  for="medicare_tax">{{ _('Medicare Tax:') }}</label>
+            <div class="controls" >
+
+                {{ form.medicare_tax( ReadOnly =True,class = "span1")  }}
+
+                {% for error in form.errors.medicare_tax %}
+                    <span class="help-inline">[{{error}}]</span><br>
+                {% endfor %}
+            </div>
+        </div>	
+</div>
+
+
+</div>
+
+<div class="row">
+    <div class="span1">
+
+        <div class="control-group{% if form.errors.post %} error{% endif %}">
+            <label class="control-label" for="taxes">{{ _('Taxes:') }}</label>
+            <div class="controls">
+                {{ form.taxes( ReadOnly =True,class = "span2") }}
+                {% for error in form.errors.taxes %}
+                    <span class="help-inline">[{{error}}]</span><br>
+                {% endfor %}
+            </div>
+        </div>
+
+    </div>
+
+<div class="span2 offset3">
+	<a href="javascript:calculate_taxes();">{{ _('Calculate') }}</a>
+</div>
+  </div>
+
+	
+        <div class="control-group">
+            <div class="controls">
+                 <input class="btn btn-primary" type="submit" value="{{ _('Save') }}"><a href="{{ url_for('contracts_list') }}"> <input class="btn" type="button" value="{{ _('Close') }}"></a>
+
+            </div>
+        </div>
+
+
+    </form>
+</div>
+
+</form>
+
+
+{% endblock %}
