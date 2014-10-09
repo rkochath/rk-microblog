@@ -303,7 +303,7 @@ def input_income(contract_id):
     
     form = InputIncomeForm()
     contract = Contracts()	
-    contract_copy = Contracts()	
+
     if request.method == "POST" and form.validate_on_submit():
 	app.logger.info('id %s' % contract_id)        	
 	
@@ -315,11 +315,11 @@ def input_income(contract_id):
 	
 	if request.form['next_step']=='save_as':
 		db.session.expunge(contract)
-	        
+                contract_copy = Contracts()		        
 	        for key in contract.__dict__:
 	             if not (key == 'id' or key == '_sa_instance_state' ) :
-	                #app.logger.info("%s:%s" %(key, contract_copy.__dict__[key]))
 	                contract_copy.__dict__[key]=contract.__dict__[key]
+	                app.logger.info("%s:%s" %(key, contract_copy.__dict__[key]))
 	                
 	             
 	             
