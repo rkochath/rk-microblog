@@ -3,6 +3,8 @@ from app import db
 from app import app
 from config import WHOOSH_ENABLED
 import re
+#run this script to migrate db after changing the model
+#DATABASE_URL=mysql://apps:apps@localhost/apps ./db_migrate.py
 
 ROLE_USER = 0
 ROLE_ADMIN = 1
@@ -90,53 +92,215 @@ class Post(db.Model):
         return '<Post %r>' % (self.body)
 
 class Contracts(db.Model):
-    id = db.Column(db.Integer, primary_key = True,autoincrement=True)
+    id = db.Column(db.Integer, primary_key = True, autoincrement=True)
     description = db.Column(db.String(140))
-    
     start_date = db.Column(db.Date)
     end_date = db.Column(db.Date)
     no_vacations = db.Column(db.Integer)
     no_holidays = db.Column(db.Integer)
     no_sickdays = db.Column(db.Integer)
     hourly_rate = db.Column(db.Numeric(6,2))
-
     work_hours = db.Column(db.Numeric(6,2))
-
     exclude_nth = db.Column(db.Integer)
     exclude_day = db.Column(db.String(2))
-
-    income = db.Column(db.Numeric(12,2))
-    expense = db.Column(db.Numeric(12,2))   
-
-
-    is_rent_acar=db.Column(db.Boolean)
-    rental_st_day=db.Column(db.String(2))
-    rental_end_day=db.Column(db.String(2))
-
+    income = db.Column(db.Numeric(14,2))
+    expense = db.Column(db.Numeric(14,2))   
+    other_deductions = db.Column(db.Numeric(14,2))   
+    taxes = db.Column(db.Numeric(14,2))   
+    #is_rent_acar= db.Column(db.Boolean)
+    is_rent_acar= db.Column(db.SmallInteger)
+    rental_st_day= db.Column(db.String(2))
+    rental_end_day= db.Column(db.String(2))
     rental_car_rate = db.Column(db.Numeric(6,2))
-
-    is_hotel = db.Column(db.Boolean)
+    #is_hotel = db.Column(db.Boolean)
+    is_hotel = db.Column(db.SmallInteger)
     hotel_st_day = db.Column(db.String(2))
     hotel_end_day = db.Column(db.String(2))
     hotel_rate = db.Column(db.Numeric(6,2))
     daily_expense = db.Column(db.Numeric(6,2))
-    
-    is_flight = db.Column(db.Boolean)
+    #is_flight = db.Column(db.Boolean)
+    is_flight = db.Column(db.SmallInteger)
     flight_ticket = db.Column(db.Numeric(6,2))
-
-    is_airport_pickup = db.Column(db.Boolean)
+    #is_airport_pickup = db.Column(db.Boolean)
+    is_airport_pickup = db.Column(db.SmallInteger)
     airport_pickup = db.Column(db.Numeric(6,2))
 
-    is_mileage = db.Column(db.Boolean)
+    #is_mileage = db.Column(db.Boolean)
+    is_mileage = db.Column(db.SmallInteger)
     commute_st_day = db.Column(db.String(2))
     commute_end_day = db.Column(db.String(2))
     daily_miles = db.Column(db.Numeric(6,2))
     mileage_rate = db.Column(db.Numeric(6,2))
     timestamp = db.Column(db.DateTime)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    
+    hsa_contr = db.Column(db.Numeric(6,2))
+    hsa_contr_freq = db.Column(db.String(2))
+    #is_hsa_pre_tax = db.Column(db.Boolean)
+    is_hsa_pre_tax = db.Column(db.SmallInteger)
+    retirement_contr = db.Column(db.Numeric(6,2))
+    retirement_contr_freq = db.Column(db.String(2))
+    #is_retirement_pre_tax = db.Column(db.Boolean)
+    is_retirement_pre_tax = db.Column(db.SmallInteger)
+    health_ins_prem = db.Column(db.Numeric(6,2))
+    health_ins_freq = db.Column(db.String(2))
+    #is_health_pre_tax = db.Column(db.Boolean)
+    is_health_pre_tax = db.Column(db.SmallInteger)
+    vision_ins_prem = db.Column(db.Numeric(6,2))
+    #is_vision_pre_tax = db.Column(db.Boolean)
+    is_vision_pre_tax = db.Column(db.SmallInteger)
+    vision_ins_freq = db.Column(db.String(2))
+    dental_ins_prem = db.Column(db.Numeric(6,2))
+    dental_ins_freq =db.Column(db.String(2))
+    #is_dental_pre_tax = db.Column(db.Boolean)
+    is_dental_pre_tax = db.Column(db.SmallInteger)
+    shortterm_dis_prem = db.Column(db.Numeric(6,2))
+    shortterm_dis_freq=db.Column(db.String(2))
+    #is_shortterm_pre_tax=db.Column(db.Boolean)
+    is_shortterm_pre_tax=db.Column(db.SmallInteger)
+    longterm_dis_prem = db.Column(db.Numeric(6,2))
+    longterm_dis_freq=db.Column(db.String(2))
+    #is_longterm_pre_tax = db.Column(db.Boolean)
+    is_longterm_pre_tax = db.Column(db.SmallInteger)
+    life_ins_prem = db.Column(db.Numeric(6,2))
+    life_ins_freq=db.Column(db.String(2))
+    #is_life_pre_tax = db.Column(db.Boolean)
+    is_life_pre_tax = db.Column(db.SmallInteger)
+    
+    fed_tax_perc = db.Column(db.Numeric(6,2))
+    state_tax_perc = db.Column(db.Numeric(6,2))
+    ssn_tax_perc = db.Column(db.Numeric(6,2))
+    self_emp_tax_perc = db.Column(db.Numeric(6,2))
+    medicare_tax_perc=db.Column(db.Numeric(6,2))
+
+
+    fed_tax = db.Column(db.Numeric(12,2))
+    state_tax = db.Column(db.Numeric(12,2))
+    ssn_tax = db.Column(db.Numeric(12,2))
+    self_emp_tax = db.Column(db.Numeric(12,2))
+    medicare_tax=db.Column(db.Numeric(12,2))
+    
+    total_days=db.Column(db.Integer)
+    total_weekends=db.Column(db.Integer)
+    total_exclusion_days=db.Column(db.Integer)
+
+    rental_days=db.Column(db.Integer)
+    hotel_days=db.Column(db.Integer)
+    no_flights=db.Column(db.Integer)
+    commute_days=db.Column(db.Integer)
+    no_hsa_contr=db.Column(db.Integer)
+    no_retirement_contr=db.Column(db.Integer)
+    no_health_ins=db.Column(db.Integer)
+    no_vision_ins=db.Column(db.Integer)
+    no_dental_ins=db.Column(db.Integer)
+    no_shortterm_dis=db.Column(db.Integer)
+    no_longterm_dis=db.Column(db.Integer)
+    no_life_ins=db.Column(db.Integer)
+       
         
-    def __repr__(self): # pragma: no cover
-        return '<Contract %r>' % (self.description)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+
+    def __init__(self,     description = '',   start_date = 0,    end_date = 0,    no_vacations = 0,    no_holidays = 0,
+    no_sickdays = 0,    hourly_rate = 0,    work_hours = 0,    exclude_nth = 0,    exclude_day = 0,    income = 0,
+    expense = 0,    other_deductions = 0,    taxes = 0,        is_rent_acar= 0,    rental_st_day= '',    rental_end_day= '',
+    rental_car_rate = 0,    is_hotel = 0,    hotel_st_day = '' ,   hotel_end_day = '',    hotel_rate = 0,    daily_expense = 0,
+    is_flight = 0,    flight_ticket = 0,    is_airport_pickup = 0,    airport_pickup = 0,    is_mileage = 0, commute_st_day = '',
+    commute_end_day = '',    daily_miles = 0,    mileage_rate = 0,    timestamp = 0,    hsa_contr = 0,    hsa_contr_freq = '',
+    is_hsa_pre_tax = 0,    retirement_contr = 0,    retirement_contr_freq = '',    is_retirement_pre_tax = 0, health_ins_prem = 0,
+    health_ins_freq = '',    is_health_pre_tax = 0,   vision_ins_prem = 0,    is_vision_pre_tax = 0,    vision_ins_freq = '',
+    dental_ins_prem = 0,    dental_ins_freq ='',    is_dental_pre_tax = 0,    shortterm_dis_prem = 0,    shortterm_dis_freq='',
+    is_shortterm_pre_tax=0,    longterm_dis_prem = 0,    longterm_dis_freq='',    is_longterm_pre_tax = 0,    life_ins_prem = 0,
+    life_ins_freq='',    is_life_pre_tax = 0, fed_tax_perc = 0,    state_tax_perc = 0,    ssn_tax_perc = 0,self_emp_tax_perc = 0,
+    medicare_tax_perc=0,    fed_tax = 0,   state_tax = 0,   ssn_tax = 0,   self_emp_tax = 0,   medicare_tax=0,   total_days=0,
+    total_weekends=0,   total_exclusion_days=0,    rental_days=0,   hotel_days=0,   no_flights=0,   commute_days=0,no_hsa_contr=0,
+    no_retirement_contr=0,   no_health_ins=0,    no_vision_ins=0,    no_dental_ins=0,    no_shortterm_dis=0,    no_longterm_dis=0,
+    no_life_ins=0)    :
+
+            self.description = description
+            self.start_date = start_date
+            self.end_date = end_date
+            self.no_vacations = no_vacations
+            self.no_holidays = no_holidays
+            self.no_sickdays = no_sickdays
+            self.hourly_rate = hourly_rate
+            self.work_hours = work_hours
+            self.exclude_nth = exclude_nth
+            self.exclude_day = exclude_day
+            self.income = income
+            self.expense = expense
+            self.other_deductions = other_deductions
+            self.taxes = taxes
+            self.is_rent_acar= is_rent_acar
+            self.rental_st_day= rental_st_day
+            self.rental_end_day= rental_end_day
+            self.rental_car_rate = rental_car_rate
+            self.is_hotel = is_hotel
+            self.hotel_st_day = hotel_st_day
+            self.hotel_end_day = hotel_end_day
+            self.hotel_rate = hotel_rate
+            self.daily_expense = daily_expense
+            self.is_flight = is_flight
+            self.flight_ticket = flight_ticket
+            self.is_airport_pickup = is_airport_pickup
+            self.airport_pickup = airport_pickup
+            self.is_mileage = is_mileage
+            self.commute_st_day = commute_st_day
+            self.commute_end_day = commute_end_day
+            self.daily_miles = daily_miles
+            self.mileage_rate = mileage_rate
+            self.timestamp = timestamp
+            self.hsa_contr = hsa_contr
+            self.hsa_contr_freq = hsa_contr_freq
+            self.is_hsa_pre_tax = is_hsa_pre_tax
+            self.retirement_contr = retirement_contr
+            self.retirement_contr_freq = retirement_contr_freq
+            self.is_retirement_pre_tax = is_retirement_pre_tax
+            self.health_ins_prem = health_ins_prem
+            self.health_ins_freq = health_ins_freq
+            self.is_health_pre_tax = is_health_pre_tax
+            self.vision_ins_prem = vision_ins_prem
+            self.is_vision_pre_tax = is_vision_pre_tax
+            self.vision_ins_freq = vision_ins_freq
+            self.dental_ins_prem = dental_ins_prem
+            self.dental_ins_freq =dental_ins_freq
+            self.is_dental_pre_tax = is_dental_pre_tax
+            self.shortterm_dis_prem = shortterm_dis_prem
+            self.shortterm_dis_freq=shortterm_dis_freq
+            self.is_shortterm_pre_tax=is_shortterm_pre_tax
+            self.longterm_dis_prem = longterm_dis_prem
+            self.longterm_dis_freq=longterm_dis_freq
+            self.is_longterm_pre_tax = is_longterm_pre_tax
+            self.life_ins_prem = life_ins_prem
+            self.life_ins_freq=life_ins_freq
+            self.is_life_pre_tax = is_life_pre_tax
+            self.fed_tax_perc = fed_tax_perc
+            self.state_tax_perc = state_tax_perc
+            self.ssn_tax_perc = ssn_tax_perc
+            self.self_emp_tax_perc = self_emp_tax_perc
+            self.medicare_tax_perc=medicare_tax_perc
+            self.fed_tax = fed_tax
+            self.state_tax = state_tax
+            self.ssn_tax = ssn_tax
+            self.self_emp_tax = self_emp_tax
+            self.medicare_tax=medicare_tax
+            self.total_days=total_days
+            self.total_weekends=total_weekends
+            self.total_exclusion_days=total_exclusion_days
+            self.rental_days=rental_days
+            self.hotel_days=hotel_days
+            self.no_flights=no_flights
+            self.commute_days=commute_days
+            self.no_hsa_contr=no_hsa_contr
+            self.no_retirement_contr=no_retirement_contr
+            self.no_health_ins=no_health_ins
+            self.no_vision_ins=no_vision_ins
+            self.no_dental_ins=no_dental_ins
+            self.no_shortterm_dis=no_shortterm_dis
+            self.no_longterm_dis=no_longterm_dis
+            self.no_life_ins=no_life_ins
+
+            def __repr__(self): # pragma: no cover
+                return '<Contract %r>' % (self.description)
 
 class Envelope(db.Model):
     

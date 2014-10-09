@@ -4,6 +4,7 @@
 {% block content %}
 
 {% include 'flash.html' %}
+
 <div class="well">
     <form class="form-horizontal" action="" method="post" name="post">
         {{form.hidden_tag()}}
@@ -19,26 +20,46 @@
         <div class="control-group">
             <div class="controls">
                 <input class="btn" type="submit" value="{{ _('Search') }}">
-		<a href="{{ url_for('rateinput', contract_id=0) }}">   <input class="btn" name = "new_btn" type="button" value="{{ _('New') }}"> </a>
+		<a href="{{ url_for('input_income', contract_id=0) }}">   <input class="btn" name = "new_btn" type="button" value="{{ _('New') }}"> </a>
+  <input id="compare" class="btn" name = "compare_btn" type="button" value="{{ _('Compare') }}"> </a>
+   <input id="delete" class="btn" name = "delete_btn" type="button" value="{{ _('Delete') }}"> </a>
+
             </div>
         </div>
     </form>
 </div>
 
-<body>  
+<body  onbeforeunload="onUnload()"  >  
+
 <table class="table">  
         <thead>  
           <tr>  
+            <th>Select</th>  
+            <th>Id</th>  
+
             <th>Contract Description</th>  
             <th>Start Date</th>  
             <th>End Date</th>  
             <th>Total Contract Value</th>  
+             
           </tr>  
         </thead>  
         <tbody>  
 
 		{% for contract in pagination.items %}
-		  <tr><td><a href="{{ url_for('rateinput', contract_id = contract.id) }}">{{ contract.description }}</td><td>{{ contract.start_date }}</td><td>{{ contract.end_date }}</td><td>{{ contract.income }}</td></a></tr>
+
+
+		  <tr>
+		  <!--<td onclick='Contract_Ids.push( {{contract.id}})'> {{ form.sel ( type ="checkbox" ) }} </td> -->
+		  <td id="sel" onclick='onSelect( {{contract.id}})'> {{ form.sel ( type ="checkbox" ) }} </td>
+		  <td>{{ contract.id }}</td>
+		  <td><a href="{{ url_for('input_income', contract_id = contract.id) }}">{{ contract.description }}</td>
+		  <td>{{ contract.start_date }}</td>
+		  <td>{{ contract.end_date }}</td>
+		  <td>{{ contract.income }}</td>
+		  </a>
+		  </tr>
+		  
 		{% endfor %}
 
         </tbody>  
@@ -47,16 +68,93 @@
 
 <ul class="pager">
     {% if pagination.has_prev %}
-    <li class="previous"><a href="{{ url_for('contracts_list', page = pagination.prev_num) }}">{{ _('Newer Contracts') }}</a></li>
+    <li  id="newer" class="previous"><a href="{{ url_for('contracts_list', page = pagination.prev_num) }}">{{ _('Newer Contracts') }}</a></li>
     {% else %}
     <li class="previous disabled"><a href="#">{{ _('Newer Contracts') }}</a></li>
     {% endif %}
     {% if pagination.has_next %}
-    <li class="next"><a href="{{ url_for('contracts_list', page = pagination.next_num) }}">{{ _('Older Contracts') }}</a></li>
+    <li id="older" class="next"><a href="{{ url_for('contracts_list', page = pagination.next_num) }}">{{ _('Older Contracts') }}</a></li>
     {% else %}
     <li class="next disabled"><a href="#">{{ _('Older Contracts') }}</a></li>
     {% endif %}
+
+
+    
 </ul>
 
+<script>
+
+
+$( document ).ready(function(){
+   $( "#compare" ).click(function() {
+    var cookie_ids = getCookie('contract_ids');
+        
+    console.log("on Compare " +cookie_ids+","+ Contract_Ids.toString());
+    //$.post(url_for('/compare_contracts',contract_ids=Contract_Ids.toString()));
+    var url='';
+    var ids ='';
+    if (cookie_ids.length > 0 || Contract_Ids.length > 0){
+            if (cookie_ids.length > 0) { ids += ','+ cookie_ids ; } 
+            if (Contract_Ids.length > 0) { ids += ','+Contract_Ids.toString();}
+            
+            url =  flask_util.url_for('compare_contracts' ,{ contract_ids:ids.slice(1)});
+     }       
+    else{
+        alert("Select at least one contract to view");
+        return;
+        
+    }
+    
+    setCookie('contract_ids',' ');
+    var k = Contract_Ids.length;
+    while (k--)  Contract_Ids.shift();
+    
+    $(location).attr('href',url); 
+    });
+    });
+
+$( document ).ready(function(){
+   $( "#delete" ).click(function() {
+   if (Contract_Ids.length > 0){
+        var user_input = confirm("Are you sure you want to delete the selected contracts?");
+        if (user_input == true){
+            var url =  flask_util.url_for('delete_contract' ,{ contract_ids:Contract_Ids.toString()});
+            var k = Contract_Ids.length;
+            while (k--)  Contract_Ids.shift();
+    
+            $(location).attr('href',url); 
+            
+        }            
+            
+            
+        }
+    else{
+        alert("Select at least one contract to delete");
+        return;
+
+    }    
+   
+    });
+    });
+
+
+
+function onUnload(){
+    //deleteCookie('contract_ids');
+       console.log("onunload global var"+ Contract_Ids.toString());
+       if (Contract_Ids.length > 0 ) {
+                 var cookie_ids = getCookie('contract_ids');
+                 if (cookie_ids.length > 0){
+                        setCookie('contract_ids',cookie_ids+","+Contract_Ids.toString());
+                 }else{
+                   setCookie('contract_ids',Contract_Ids.toString());
+                 }       
+         }   
+//         alert(Contract_Ids);     
+    
+ }
+ 
+
+</script>
 
 {% endblock %}

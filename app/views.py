@@ -4,14 +4,14 @@ from flask.ext.sqlalchemy import get_debug_queries
 from flask.ext.babel import gettext
 from app import app, db, lm, oid, babel, gi,fujs
 
-from forms import LoginForm, EditForm, PostForm, SearchForm, RateCalcForm,ContractsListForm,InputDeductionsForm
+from forms import LoginForm, EditForm, PostForm, SearchForm, InputIncomeForm,ContractsListForm,InputExpenseForm, InputOtherDedForm, InputTaxForm
 from models import User, ROLE_USER, ROLE_ADMIN, Post,Contracts
 from datetime import datetime
 from emails import follower_notification
 from guess_language import guessLanguage
 from translate import microsoft_translate
 from config import POSTS_PER_PAGE, MAX_SEARCH_RESULTS, LANGUAGES, DATABASE_QUERY_TIMEOUT, WHOOSH_ENABLED, OAUTH_ENABLED,ADMINS
-from calculate_income import calculate_income,calculate_total_expense
+from calculate_income import calculate_total_income,calculate_total_expense, calculate_total_other_deductions, calculate_total_taxes
 import sys
 from dateutil.parser import *
 import inspect
@@ -279,62 +279,102 @@ def translate():
 
 
 
-
-
-@app.route('/rateinput/<int:contract_id>', methods = ['GET', 'POST'])
+@app.route('/contracts_list', methods = ['GET'])
+@app.route('/contracts_list/<int:page>', methods = ['GET'])
 @login_required
-def rateinput(contract_id):
+def contracts_list(page=1):
+    #app.logger.info('inside contracts list view')        	
+    contracts = Contracts.query.filter_by(user_id = g.user.id).order_by(Contracts.timestamp.desc()).paginate(page, POSTS_PER_PAGE, False)
+    
+    form = ContractsListForm()
+        
+    return render_template('contracts_list.html',
+        title = 'List of Contracts',
+        form = form,
+        pagination = contracts)
 
-    app.logger.info('inside rateinput')        	
 
-    form = RateCalcForm()
-	
+@app.route('/input_income/<int:contract_id>', methods = ['GET', 'POST'])
+@login_required
+def input_income(contract_id):
+
+    app.logger.info('inside input income')        	
+
+    
+    form = InputIncomeForm()
     contract = Contracts()	
+    contract_copy = Contracts()	
     if request.method == "POST" and form.validate_on_submit():
 	app.logger.info('id %s' % contract_id)        	
 	
 	
 	if contract_id > 0 :
 	    contract = Contracts.query.filter_by(id = contract_id).first()
-
-	#else:
-	#    contract = Contracts()
-	form.populate_obj(contract)
-
-
-	contract.timestamp = datetime.utcnow()
-	contract.user_id = g.user.id
-
-        db.session.add(contract)
-	db.session.flush()
-	#db.session.refresh(contract,['id'])
-        #if contract_id == 0 :
-		#db.session.refresh(contract)
-	contract_id = contract.id
-	app.logger.info('newly inserted id after flush %s' % contract_id)        	
-
-        db.session.commit()
-
-        flash(gettext('Data saved successfully' ))
-        
+	    
+	InputIncomeForm(request.form).populate_obj(contract)
 	
-        #return redirect(url_for('rate_input_deductions',contract_id = contract_id))
-	#return
-    if 	request.method == "GET" : 
-    	contract = Contracts.query.filter_by(id = contract_id).first()	
-    form = RateCalcForm(obj=contract)
-    
-    return render_template('rate_input.html',
-        form = form)
+	if request.form['next_step']=='save_as':
+		db.session.expunge(contract)
+	        
+	        for key in contract.__dict__:
+	             if not (key == 'id' or key == '_sa_instance_state' ) :
+	                #app.logger.info("%s:%s" %(key, contract_copy.__dict__[key]))
+	                contract_copy.__dict__[key]=contract.__dict__[key]
+	                
+	             
+	             
+	        contract_copy.timestamp = datetime.utcnow()
+	        contract_copy.user_id = g.user.id
+                
+                db.session.add(contract_copy)
+	        db.session.flush()
+	        contract_id = contract_copy.id
+	        app.logger.info('Contract saved as  %s' % contract_id)        	
 
-@app.route('/calculate', methods = ['POST'])
+                db.session.commit()
+                flash(gettext('Data saved successfully' ))
+
+                form = InputIncomeForm(obj=contract_copy)
+    
+                return render_template('input_income.html',
+                        form = form)
+        else:	        
+	        contract.timestamp = datetime.utcnow()
+	        contract.user_id = g.user.id
+                db.session.add(contract)
+	        db.session.flush()
+	        contract_id = contract.id
+	        app.logger.info('newly inserted id after flush %s' % contract_id)        	
+                db.session.commit()
+
+                flash(gettext('Data saved successfully' ))
+                
+	        if request.form['next_step']=='input_expenses':
+                        return redirect(url_for('input_expenses',contract_id = contract_id))
+                else:
+
+                    form = InputIncomeForm(obj=contract)
+                    
+                    return render_template('input_income.html',
+                        form = form)
+
+    if 	request.method == "GET" and contract_id > 0: 
+    	contract = Contracts.query.filter_by(id = contract_id).first()	
+    
+    form = InputIncomeForm(obj=contract)
+            
+    return render_template('input_income.html',
+                form = form)
+
+@app.route('/calculate_income', methods = ['POST'])
 @login_required
-def calculate():
+def calculate_income():
    
     #This server function is called when user clicks on the calculate link. Form data is send to calculate income function 
     #and the result of function is returned to the client.
+    app.logger.info('calculate income ' )        	
     return jsonify({
-        'income': calculate_income(
+        'income': calculate_total_income(
             request.form['start_date'],
             request.form['end_date'],
             request.form['no_vacations'],
@@ -344,12 +384,51 @@ def calculate():
             request.form['work_hours'],
 	    request.form['exclude_nth'],
 	    request.form['exclude_day']
-
 	) })
 
-@app.route('/calculate_expense', methods = ['POST'])
+
+
+@app.route('/input_expenses/<contract_id>', methods = ['GET','POST'])
+#@app.route('/input_expenses', methods = ['GET','POST'])
 @login_required
-def calculate_expense():
+def input_expenses(contract_id):
+
+    
+    app.logger.info('inside deduction save') 
+    #if request.method == "POST"  and deduction_form.validate_on_submit():
+    
+    
+    contract = Contracts()	
+    if request.method == "POST" :
+        app.logger.info('Inside POST') 
+	contract = Contracts.query.filter_by(id = request.form['id']).first()
+	try:
+	    InputExpenseForm(request.form).populate_obj(contract)    	    
+	    app.logger.info('form data populated')
+        except AttributeError as err:
+	    app.logger.info('ERROR:%s' % err)  
+	contract.timestamp = datetime.utcnow()
+	contract.user_id = g.user.id
+	app.logger.info('Saving contract with deduction') 
+	db.session.add(contract)
+	db.session.flush()
+	db.session.commit()
+	app.logger.info('data saved with deduction') 
+	if request.form['next_step']=='input_other_deductions':
+	        return redirect(url_for('input_other_deductions', contract_id=request.form['id']))
+    elif  request.method == "GET" :
+        app.logger.info('retrieving contract deductions %s' % contract_id ) 
+        contract = Contracts.query.filter_by(id = contract_id).first()	
+        
+    expense_form = InputExpenseForm(obj=contract)
+    return render_template('input_expenses.html',
+		        title = 'Input expense',
+		        form = expense_form)
+
+
+@app.route('/calculate_expenses', methods = ['POST'])
+@login_required
+def calculate_expenses():
    
     #This server function is called when user clicks on the calculate link in the deductions page. Form data is send to calculate expense function 
     #and the result of function is returned to the client.
@@ -377,147 +456,20 @@ def calculate_expense():
 	    request.form['is_airport_pickup'],
 	    request.form['airport_pickup']		    
 	) })
-		    
-@app.route('/contracts_list', methods = ['GET'])
-@app.route('/contracts_list/<int:page>', methods = ['GET'])
+
+
+
+@app.route('/input_other_deductions/<contract_id>', methods = ['GET','POST'])
 @login_required
-def contracts_list(page=1):
-    #app.logger.info('inside contracts list view')        	
-    contracts = Contracts.query.filter_by(user_id = g.user.id).order_by(Contracts.timestamp.desc()).paginate(page, POSTS_PER_PAGE, False)
-    
-    form = ContractsListForm()
-        
-    return render_template('contracts_list.html',
-        title = 'List of Contracts',
-        form = form,
-        pagination = contracts)
+def input_other_deductions(contract_id):
 
-
-
-
-@app.route('/save_contract/<contract_str>', methods = ['GET','POST'])
-@login_required
-def save_contract(contract_str):
-
-        contract_str = contract_str.replace('=',':')
-        contract_dict = dict([i.split(':') for i in contract_str.split('&')])
-	for key in contract_dict:
-		app.logger.info("%s:%s" %(key, contract_dict[key]))
-	contract_dict['start_date'] = '-'.join(contract_dict['start_date'].split('%2F'))
-	contract_dict['end_date'] = '-'.join(contract_dict['end_date'].split('%2F'))
-        contract_id = None if contract_dict['id'] == '' else int(contract_dict['id'])
-	contract = Contracts( id=contract_id,
-				description = contract_dict['description'],
-				start_date = parse(contract_dict['start_date'],fuzzy=True),
-				end_date = parse(contract_dict['end_date'],fuzzy=True),
-				no_sickdays= int(contract_dict['no_sickdays']),
-				no_vacations = int(contract_dict['no_vacations']),
-				work_hours = float(contract_dict['work_hours']),
-				exclude_day = contract_dict['exclude_day'],
-				exclude_nth = int(contract_dict['exclude_nth']),
-				income = float(contract_dict['income']),
-				no_holidays = int(contract_dict['no_holidays']),
-				hourly_rate = float(contract_dict['hourly_rate']))
-        
-        rateform = RateCalcForm(obj=contract)
-	
-	if contract_id > 0  :
-		
-		app.logger.info('Retrieving contract for update %s' % contract_id)
-	    	contract = Contracts.query.filter_by(id = contract_id).first()	
-		rateform.populate_obj(contract)
-		contract.timestamp = datetime.utcnow()
-		contract.user_id = g.user.id
-
-		db.session.add(contract)
-		db.session.flush()
-		contract_id = contract.id
-		app.logger.info('Contract created/updated %s' % contract_id)        	
-		db.session.commit()
-		
-	else:
-
-		contract.timestamp = datetime.utcnow()
-		contract.user_id = g.user.id
-
-		db.session.add(contract)
-		db.session.flush()
-		contract_id = contract.id
-		app.logger.info('Contract created/updated %s' % contract_id)        	
-		db.session.commit()
-
-	return redirect(url_for('rate_input_deductions', contract_id=contract_id))
-
-
-@app.route('/update_deductions', methods = ['POST'])
-@login_required
-def update_deductions():
-	app.logger.info('Udate contract expenses %s' % request.form['id'])
-
-        contract_id = int(request.form['id'])
-
-
-
-
-	if contract_id > 0  :
-	    	contract = Contracts.query.filter_by(id = contract_id).first()	
-
-		    
-	        contract.is_rent_acar =(True) if request.form['is_rent_acar'] =='true' else False
-	        contract.rental_st_day =request.form['rental_st_day'] 
-
-	        contract.rental_end_day=request.form['rental_end_day'] 
-	        contract.is_hotel=(True) if request.form['is_hotel'] =='true' else False 
-	        contract.hotel_st_day=request.form['hotel_st_day'] 
-
-	        contract.hotel_end_day=request.form['hotel_end_day'] 
-
-	        contract.is_flight=(True) if request.form['is_flight'] =='true' else False 
-	        contract.is_airport_pickup=(True) if request.form['is_airport_pickup'] =='true' else False 
-	        contract.is_mileage=(True) if request.form['is_mileage'] =='true' else False 
-	        contract.commute_st_day=request.form['commute_st_day'] 
-	        contract.commute_end_day=request.form['commute_end_day'] 
-	        contract.rental_car_rate=float(request.form['rental_car_rate'] )
-	        contract.hotel_rate=float(request.form['hotel_rate'] )
-	        contract.flight_ticket=float(request.form['flight_ticket'] )
-	        contract.airport_pickup=float(request.form['airport_pickup'] )
-	        contract.daily_expense=float(request.form['daily_expense'] )
-	        contract.daily_miles=float(request.form['daily_miles'] )
-	        contract.mileage_rate=float(request.form['mileage_rate'] )
-	        contract.expense=float(request.form['expense'] )
-	
-		contract.timestamp = datetime.utcnow()
-		contract.user_id = g.user.id
-		db.session.add(contract)
-		app.logger.info('contract added to db session')	
-		db.session.flush()
-		app.logger.info('after flush')
-		db.session.commit()
-		app.logger.info('after commit')
-		return jsonify({
-	'result':str(contract_id) })
-	
-	app.logger.info('some thing went wrong.... ')
-	return jsonify({
-	'message':'-1' })
-
-
-
-
-@app.route('/rate_input_deductions/<contract_id>', methods = ['GET','POST'])
-#@app.route('/rate_input_deductions', methods = ['GET','POST'])
-@login_required
-def rate_input_deductions(contract_id):
-
-    deduction_form = InputDeductionsForm()
-    app.logger.info('inside deduction save') 
-    #if request.method == "POST"  and deduction_form.validate_on_submit():
+    app.logger.info('inside other deductions save') 
+    contract = Contracts()	
     if request.method == "POST" :
         app.logger.info('Inside POST') 
-	#contract = Contracts.query.filter_by(id = deduction_form['id']).first()
 	contract = Contracts.query.filter_by(id = request.form['id']).first()				
 	try:
-	    InputDeductionsForm(request.form).populate_obj(contract)    	    
+	    InputOtherDedForm(request.form).populate_obj(contract)    	    
 	    app.logger.info('form data populated')
         except AttributeError as err:
 	    app.logger.info('ERROR:%s' % err)  
@@ -528,19 +480,136 @@ def rate_input_deductions(contract_id):
 	db.session.flush()
 	db.session.commit()
 	app.logger.info('data saved with deduction') 
-	return redirect(url_for('contracts_list'))
+	if request.form['next_step']=='input_tax':
+	        return redirect(url_for('input_taxes',contract_id=request.form['id']))
+	
     elif  request.method == "GET" :
-        app.logger.info('inside GET %s' % contract_id) 
-        #contract_str = contract_str.replace('=',':')
-        #contract_dict = dict([i.split(':') for i in contract_str.split('&')])
-	#contract_dict = dict(contract_str)
-	#contract_id = int(request.form[id]) if contract_str == -1 else int(contract_str)
+    #app.logger.info('inside GET %s' % contract_id) 
+        contract = Contracts.query.filter_by(id = contract_id).first()	
+    
+    other_ded_form = InputOtherDedForm(obj=contract)
+    return render_template('input_other_deductions.html',
+			title = 'Input Other Deductions',
+			form = other_ded_form)
 
-	#contract_id = int(contract_str)
-	app.logger.info('retrieving contract deductions %s' % contract_id ) 
-    	contract = Contracts.query.filter_by(id = contract_id).first()	
-        deduction_form = InputDeductionsForm(obj=contract)
-        return render_template('rate_input_deductions.html',
-			title = 'Input Deductions',
-			form = deduction_form)
+
+
+@app.route('/calculate_other_deductions', methods = ['POST'])
+@login_required
+def calculate_other_deductions():
+   
+    #This server function is called when user clicks on the calculate link in the deductions page. Form data is send to calculate expense function 
+    #and the result of function is returned to the client.
+    app.logger.info('inside calculate other deductions view')        	
+    return jsonify({
+        'other_deductions': calculate_total_other_deductions(
+            request.form['start_date'],
+            request.form['end_date'],
+	    request.form['hsa_contr'],
+	    request.form['hsa_contr_freq'],
+	    request.form['retirement_contr'],
+	    request.form['retirement_contr_freq'],
+	    request.form['health_ins_prem'],
+	    request.form['health_ins_freq'],
+	    request.form['vision_ins_prem'],
+	    request.form['vision_ins_freq'],
+	    request.form['dental_ins_prem'],
+	    request.form['dental_ins_freq'],
+	    request.form['shortterm_dis_prem'],
+	    request.form['shortterm_dis_freq'],
+	    request.form['longterm_dis_prem'],
+	    request.form['longterm_dis_freq'],
+            request.form['life_ins_prem'],
+	    request.form['life_ins_freq']
+	    
+	) })
+
+		    
+@app.route('/input_taxes/<contract_id>', methods = ['GET','POST'])
+@login_required
+def input_taxes(contract_id):
+
+    app.logger.info('inside taxes save') 
+    contract = Contracts()	
+    if request.method == "POST" :
+        app.logger.info('Inside POST') 
+	contract = Contracts.query.filter_by(id = request.form['id']).first()				
+	try:
+	    InputTaxForm(request.form).populate_obj(contract)    	    
+	    app.logger.info('tax rates %s, %s'%(contract.fed_tax_perc,contract.state_tax_perc))
+        except AttributeError as err:
+	    app.logger.info('ERROR:%s' % err)  
+	contract.timestamp = datetime.utcnow()
+	contract.user_id = g.user.id
+	app.logger.info('Saving contract with deduction') 
+	db.session.add(contract)
+	db.session.flush()
+	db.session.commit()
+	app.logger.info('data saved with deduction') 
+	
+    elif  request.method == "GET" :
+        contract = Contracts.query.filter_by(id = contract_id).first()	
+    
+    taxes_form = InputTaxForm(obj=contract)
+    return render_template('input_taxes.html',
+			title = 'Input Taxes',
+			form = taxes_form)
+
+
+
+
+@app.route('/calculate_taxes', methods = ['POST'])
+@login_required
+def calculate_taxes():
+   
+    #This server function is called when user clicks on the calculate link in the deductions page. Form data is send to calculate expense function 
+    #and the result of function is returned to the client.
+    app.logger.info('inside calculate taxes view')        	
+    return jsonify({
+         'taxes':calculate_total_taxes(
+            request.form['contract_id'],    
+            request.form['start_date'],
+            request.form['end_date'],
+	    request.form['fed_tax_perc'],
+	    request.form['state_tax_perc'],
+	    request.form['ssn_tax_perc'],
+	    request.form['self_emp_tax_perc'],
+	    request.form['medicare_tax_perc']) })
+
+
+
+@app.route('/compare_contracts/<contract_ids>', methods = ['GET','POST'])
+@login_required
+def compare_contracts(contract_ids):
+    contract1 = Contracts()
+    contract2 = Contracts()
+    contract3 = Contracts()
+    app.logger.info('contract_ids %s'% contract_ids)        	
+    ids = [int(i) for i in contract_ids.split(',')][::-1] #take the last 3 incase the array has more than 3
+    
+    if len(ids) > 0:
+            contract1 = Contracts.query.filter_by(id = ids[0]).first()	
+    if len(ids) > 1:        
+            contract2 = Contracts.query.filter_by(id = ids[1]).first()	
+    if len(ids) > 2 :        
+            contract3 = Contracts.query.filter_by(id = ids[2]).first()	
+    
+    return render_template('compare_contracts.html',
+			title = 'Compare Contracts', contract1=contract1, contract2=contract2, contract3=contract3)
+
+@app.route('/delete_contract/<contract_ids>', methods = ['GET','POST'])
+@login_required
+def delete_contract(contract_ids):
+
+    app.logger.info('inside delete contract') 
+    contract_ids = [int(i) for i in contract_ids.split(',')]
+    for contract_id in contract_ids:
+        contract = Contracts.query.filter_by(id = contract_id).first()				
+	db.session.delete(contract)
+	db.session.flush()
+	db.session.commit()
+	app.logger.info('Contract record deleted')
+
+    return redirect(url_for('contracts_list'))    
+        
 

@@ -1,5 +1,38 @@
 <table class="table table-hover">
-    <tr>
-        <td width="70px"><a href="{{url_for('rate_input', contract_id = contract.id)}}"> />{{contract.description}} {{contract.start_date}} {{contract.end_date}}</a></td>
-    </tr>
+<tr>
+		  
+		  <td><a href="{{ url_for('input_income', contract_id = contract.id) }}">{{ contract.description }}</td>
+		  <td>{{ contract.start_date }}</td>
+		  <td>{{ contract.end_date }}</td>
+		  <td>{{ contract.income }}</td>
+		  <td id="contract_id">{{ contract.id }}</td>
+		  <td onclick='Contract_Ids.push( {{contract.id}})'> {{ form.sel ( type ="checkbox" ) }} </td> 
+		  </a>
+		  
+</tr>
 </table>
+
+<script>
+$( document ).ready(function(){
+   $( "#sel" ).click(function() {
+        var contract_id = document.getElementById('contract_id').innerHTML;
+        console.log(contract_id);
+	Contract_Ids.push(contract_id);
+        return;
+    });
+});
+
+$( document ).ready(function(){
+   $( "#compare" ).click(function() {
+        
+    console.log(Contract_Ids.toString());
+    //$.post(url_for('/compare_contracts',contract_ids=Contract_Ids.toString()));
+    var url =  flask_util.url_for('compare_contracts' ,{ contract_ids:Contract_Ids.toString()});
+    $(location).attr('href',url); 
+    
+    
+    
+    });
+});
+
+</script>

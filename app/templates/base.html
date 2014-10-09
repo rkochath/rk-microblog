@@ -8,17 +8,10 @@
     {% endif %}
     <link href="{{ url_for('.static', filename = 'css/bootstrap.min.css') }}" rel="stylesheet" media="screen">
     <link href="{{ url_for('.static', filename = 'css/bootstrap-responsive.min.css') }}" rel="stylesheet">
-    <!--	
     <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
-    -->	
-    <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css" />
     <script src="http://code.jquery.com/jquery-latest.js"></script>
     {{ fujs.js }}
-    <!--
     <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
-    -->
-    <script src="http://code.jquery.com/ui/1.11.1/jquery-ui.js"></script>	
-
     <link rel="stylesheet" href="/resources/demos/style.css" />
     <script src="{{ url_for('.static', filename = 'js/bootstrap.min.js') }}"></script>
     <script src="{{ url_for('.static', filename = 'js/moment.min.js') }}"></script>
@@ -29,6 +22,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script>
 
+var Contract_Ids=[];
+    
     function translate(sourceLang, destLang, sourceId, destId, loadingId) {
         $(destId).hide();
         $(loadingId).show();
@@ -54,7 +49,7 @@
     $( "#end_date" ).datepicker();
     });
 
-   function calculate() {
+   function calculate_income() {
 		var start_date = document.getElementById('start_date');
 		var end_date = document.getElementById('end_date');
 		var no_vacations = document.getElementById('no_vacations');	
@@ -65,7 +60,7 @@
 		var exclude_nth = document.getElementById('exclude_nth');	
 		var exclude_day = document.getElementById('exclude_day');		
 
-		$.post('/calculate', {
+		$.post('/calculate_income', {
 		    start_date:start_date.value,
 		    end_date:end_date.value,
 		    no_vacations:no_vacations.value,
@@ -77,7 +72,12 @@
 		    exclude_day:exclude_day.value 	
 
 		}).done(function(result) {
-		   document.getElementById('income').value = parseFloat(result['income']);
+	           income = result['income'];
+		   income_tup = JSON.parse(income);
+		   document.getElementById('income').value = parseFloat(income_tup['income']);
+		   document.getElementById('total_days').value = parseInt(income_tup['total_days']);
+		   document.getElementById('total_weekends').value = parseInt(income_tup['total_weekends']);
+		   document.getElementById('total_exclusion_days').value = parseInt(income_tup['total_exclusion_days']);
 		}).fail(function() {
 		    $(income).text('***')            
 		});
@@ -86,7 +86,7 @@
 	
 
 
-   function calculate_expense() {
+   function calculate_expenses() {
 
 	    var start_date = document.getElementById('start_date');
 	    var end_date = document.getElementById('end_date');
@@ -111,7 +111,7 @@
 	    var mileage_rate = document.getElementById('mileage_rate');
 	    
 	    
-	    $.post('/calculate_expense', {
+	    $.post('/calculate_expenses', {
 		    start_date:start_date.value,
 		    end_date:end_date.value,
 		    is_rent_acar :is_rent_acar,
@@ -136,8 +136,88 @@
 		    airport_pickup:airport_pickup.value
 		    
 		    
+
+		    
 		}).done(function(result) {
-		   document.getElementById('expense').value = parseFloat(result['expense']);	
+	           expense = result['expense'];
+		   expense_tup = JSON.parse(expense);
+		   document.getElementById('expense').value = parseFloat(expense_tup['expense']);
+		   document.getElementById('rental_days').value = parseInt(expense_tup['rental_days']);
+                   document.getElementById('hotel_days').value = parseInt(expense_tup['hotel_days']);		   
+		   document.getElementById('no_flights').value = parseInt(expense_tup['no_flights']);
+		   document.getElementById('commute_days').value = parseInt(expense_tup['commute_days']);
+		}).fail(function() {
+		    $(expense).text('***')            
+		});
+
+
+	    }
+
+
+   function calculate_other_deductions() {
+
+	    var start_date = document.getElementById('start_date');
+	    var end_date = document.getElementById('end_date');
+	    var hsa_contr = document.getElementById('hsa_contr');
+	    var hsa_contr_freq = document.getElementById('hsa_contr_freq');
+	    var retirement_contr = document.getElementById('retirement_contr');
+	    var retirement_contr_freq = document.getElementById('retirement_contr_freq');
+	    var health_ins_prem = document.getElementById('health_ins_prem');
+	    var health_ins_freq = document.getElementById('health_ins_freq');
+	    var vision_ins_prem = document.getElementById('vision_ins_prem');
+	    var vision_ins_freq = document.getElementById('vision_ins_freq');
+	    var dental_ins_prem = document.getElementById('dental_ins_prem');
+	    var dental_ins_freq = document.getElementById('dental_ins_freq'); 
+	    var shortterm_dis_prem = document.getElementById('shortterm_dis_prem'); 
+	    var shortterm_dis_freq = document.getElementById('shortterm_dis_freq');
+            var longterm_dis_prem = document.getElementById('longterm_dis_prem');
+            var longterm_dis_freq = document.getElementById('longterm_dis_freq');
+            var life_ins_prem = document.getElementById('life_ins_prem'); 
+            var life_ins_freq = document.getElementById('life_ins_freq');
+            
+	    
+	    
+	    $.post('/calculate_other_deductions', {
+		    start_date:start_date.value,
+		    end_date:end_date.value,
+		    hsa_contr:hsa_contr.value,
+		    hsa_contr_freq:hsa_contr_freq.value,
+		    retirement_contr:retirement_contr.value,
+		    retirement_contr_freq:retirement_contr_freq.value,
+		    health_ins_prem:health_ins_prem.value,
+		    health_ins_freq:health_ins_freq.value,
+		    vision_ins_prem:vision_ins_prem.value,
+		    vision_ins_freq:vision_ins_freq.value,
+		    dental_ins_prem:dental_ins_prem.value,
+		    dental_ins_freq:dental_ins_freq.value,
+		    shortterm_dis_prem:shortterm_dis_prem.value,
+		    shortterm_dis_freq:shortterm_dis_freq.value,
+		    longterm_dis_prem:longterm_dis_prem.value,
+		    longterm_dis_freq:longterm_dis_freq.value,
+		    life_ins_prem:life_ins_prem.value,
+		    life_ins_freq:life_ins_freq.value
+		}).done(function(result) {
+
+		   
+		   
+	           other_deductions = result['other_deductions'];
+		   deductions_tup = JSON.parse(other_deductions);
+
+
+
+		   
+		   document.getElementById('no_hsa_contr').value = parseInt(deductions_tup['no_hsa_contr']);
+		   document.getElementById('no_retirement_contr').value = parseInt(deductions_tup['no_retirement_contr']);
+		   document.getElementById('no_health_ins').value = parseInt(deductions_tup['no_health_ins']);
+		   document.getElementById('no_vision_ins').value = parseInt(deductions_tup['no_vision_ins']);
+		   document.getElementById('no_dental_ins').value = parseInt(deductions_tup['no_dental_ins']);
+		   document.getElementById('no_shortterm_dis').value = parseInt(deductions_tup['no_shortterm_dis']);
+		   document.getElementById('no_longterm_dis').value = parseInt(deductions_tup['no_longterm_dis']);
+		   document.getElementById('no_life_ins').value = parseInt(deductions_tup['no_life_ins']);
+		
+		   document.getElementById('other_deductions').value = parseFloat( deductions_tup['other_deductions']);		   
+		
+		
 		}).fail(function() {
 		    $(income).text('***')            
 		});
@@ -145,107 +225,79 @@
 
 	    }
 
-
-
-   function save_contract() {
-		console.log("inside save contract");
-		var contract_id = -1;
-		console.log("going to post");
-
-
-
-
-	var mypost = $.post('/save_contract',$( "#rate_input_form"  ).serialize() ).done(function(result) {
-		  console.log("done with result"+result);
-		  document.getElementById('id').value = parseInt(result['id']);	
-		  contract_id = parseInt(result['id']);
-		  //console.log("Updated for id"+contract_id);	
-		}).fail(function(jqXHR, textStatus, errorThrown) {
-		  var responseText = jQuery.parseJSON(errorThrown.responseText);
-        	  //alert(responseText);
-		  console.log(textStatus + ":"+ errorThrown);
-		});
-	
-/*
-	$.ajax({
-		url: '/save_contract',
-		type: 'POST'
-	    },
-	    data: $('#rate_input_form').serialize(),
-	    success: function () {
-		console.log(result['id']);
-		contract_id=result['id'];
-	    },
-	    error: function (errorThrown) {
-		data = JSON.parse(errorThrown.responseText);
-		console.log(data.error+ ":" + errorThrown);
-	    }
-	});
-*/
-
-	//alert("Contract id returned "+ contract_id + ":))" );
-	return contract_id;
-
-	    }
-
-   function update_deductions() {
-	    var id = document.getElementById('id');
-	    var is_rent_acar = document.getElementById('is_rent_acar').checked?'true':'false';
-	    var rental_st_day = document.getElementById('rental_st_day');
-	    var rental_end_day = document.getElementById('rental_end_day');
-	    var is_hotel = document.getElementById('is_hotel').checked?'true':'false';
-	    var hotel_st_day = document.getElementById('hotel_st_day');
-	    var hotel_end_day = document.getElementById('hotel_end_day');
-	    var is_flight = document.getElementById('is_flight').checked?'true':'false';
-	    var is_airport_pickup = document.getElementById('is_airport_pickup').checked?'true':'false';
-	    var is_mileage = document.getElementById('is_mileage').checked?'true':'false';
-	    var commute_st_day = document.getElementById('commute_st_day');
-	    var commute_end_day = document.getElementById('commute_end_day');
-	    var rental_car_rate = document.getElementById('rental_car_rate');
-	    var hotel_rate = document.getElementById('hotel_rate');
-	    var flight_ticket = document.getElementById('flight_ticket');
-	    var airport_pickup = document.getElementById('airport_pickup');
-	    var daily_expense = document.getElementById('daily_expense');
-	    var daily_miles = document.getElementById('daily_miles');
-	    var mileage_rate = document.getElementById('mileage_rate');
-	    var expense = document.getElementById('expense');
-	    alert("Going to update expense");
-
-	$.post('/update_deductions', {
-		    id :id.value,
-		    is_rent_acar :is_rent_acar,
-		    rental_st_day :rental_st_day.value,
-
-		    rental_end_day:rental_end_day.value,
-		    is_hotel:is_hotel,
-		    hotel_st_day:hotel_st_day.value,
-
-		    hotel_end_day:hotel_end_day.value,
-
-		    is_flight:is_flight,
-	
-		    is_airport_pickup:is_airport_pickup,
-		    is_mileage:is_mileage,
-
-		    commute_st_day:commute_st_day.value,
-		    commute_end_day:commute_end_day.value,
-		    rental_car_rate:rental_car_rate.value,
-		    hotel_rate:hotel_rate.value,
-		    flight_ticket:flight_ticket.value,
-		    airport_pickup:airport_pickup.value,
-		    daily_expense:daily_expense.value,
-		    daily_miles:daily_miles.value,
-		    mileage_rate:mileage_rate.value,
-		    expense:expense.value	 
+function calculate_taxes() {
+            var contract_id = document.getElementById('id');    
+	    var start_date = document.getElementById('start_date');
+	    var end_date = document.getElementById('end_date');
+	    var fed_tax_perc = document.getElementById('fed_tax_perc');
+	    var state_tax_perc = document.getElementById('state_tax_perc');
+	    var ssn_tax_perc = document.getElementById('ssn_tax_perc');
+	    var self_emp_tax_perc = document.getElementById('self_emp_tax_perc');
+	    var medicare_tax_perc = document.getElementById('medicare_tax_perc');
+            
+	    
+	    
+	    $.post('/calculate_taxes', {
+	            contract_id:contract_id.value,
+		    start_date:start_date.value,
+		    end_date:end_date.value,
+		    fed_tax_perc:fed_tax_perc.value,
+		    state_tax_perc:state_tax_perc.value,
+		    ssn_tax_perc:ssn_tax_perc.value,
+		    self_emp_tax_perc:self_emp_tax_perc.value,
+		    medicare_tax_perc:medicare_tax_perc.value
+		}).done(function(result) {
+		
+		   taxes = result['taxes'];
+		   tax_tup = JSON.parse(taxes)
+		   document.getElementById('fed_tax').value = parseFloat(tax_tup['FedTax']);
+		   document.getElementById('state_tax').value = parseFloat(tax_tup['StateTax']);	
+		   document.getElementById('ssn_tax').value = parseFloat(tax_tup['SSNTax']);	
+		   document.getElementById('self_emp_tax').value = parseFloat(tax_tup['SelfEmpTax']);		
+		   document.getElementById('medicare_tax').value = parseFloat(tax_tup['MedicareTax']);
+		   document.getElementById('taxes').value = parseFloat(tax_tup['TotalTaxes']);		
+		   
 		}).fail(function() {
-		  var responseText = jQuery.parseJSON(jqXHR.responseText);
-        	  //alert(responseText);
-		  //console.log(responseText);
-		  alert("Status :" + textStatus + ":" + responseText );
+		    $(taxes).text('***')            
 		});
 
 
 	    }
+
+
+
+
+function setCookie(cname,cvalue) {
+    document.cookie = cname+"="+cvalue +"; path=/";
+} 
+
+
+function getCookie(cname) {
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0; i<ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1);
+        if (c.indexOf(name) != -1) return c.substring(name.length,c.length);
+    }
+    return "";
+} 
+
+function deleteCookie(cname){
+       document.cookie = cname+"=; expires=Thu, 01 Jan 1970 00:00:00 UTC";
+       
+}
+
+function onSelect(contract_id){
+if (Contract_Ids.length>0) {
+   var i = Contract_Ids.indexOf(contract_id)
+   if (i>=0 ) {
+        Contract_Ids.splice(i,1) ; //remove the id on unselect
+        return;
+        }
+}        
+Contract_Ids.push(contract_id);
+}         
 
 
     </script>

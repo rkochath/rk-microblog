@@ -4,7 +4,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 CSRF_ENABLED = True
 SECRET_KEY = '\x88\xb2\x96\x1d\x89\x85\xa0^\xa6\xe1n\xee\xfd\xc2\xa3[\xda\x08\x03La/@E'
-OAUTH_ENABLED = True
+OAUTH_ENABLED = False
 
 OPENID_PROVIDERS = [
     { 'name': 'Google', 'url': 'https://www.google.com/accounts/o8/id' },

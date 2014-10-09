@@ -13,7 +13,7 @@
 <div class="well">
     <form id = "rate_input_form" class="form-horizontal" action="" method="post" name="rate_input" >
         {{form.hidden_tag()}}
-	<td>{{ form.id type="hidden"}}</td>
+	<td>{{ form.id }}</td>
         <div class="control-group{% if form.errors.post %} error{% endif %}">
             <label class="control-label"  for="description">{{ _('Contract Description:') }}</label>
             <div class="controls" >
@@ -131,7 +131,7 @@
         <div class="control-group{% if form.errors.post %} error{% endif %}">
             <label class="control-label" for="income">{{ _('Total Contract Income:') }}</label>
             <div class="controls">
-                {{ form.income( ReadOnly =True, cols = 2, rows = 3, class = "span2") }} <a href="javascript:calculate();">{{ _('Calculate') }}</a>
+                {{ form.income( ReadOnly =True, cols = 2, rows = 3, class = "span2") }} <a href="javascript:calculate_income();">{{ _('Calculate') }}</a>
                 {% for error in form.errors.income %}
                     <span class="help-inline">[{{error}}]</span><br>
                 {% endfor %}
@@ -179,7 +179,7 @@ $( document ).ready(function(){
 */
 
 
-        var url =  flask_util.url_for('save_contract' ,{ contract_str:$( "#rate_input_form"  ).serialize()});
+        var url =  flask_util.url_for('save_income' ,{ contract_str:$( "#rate_input_form"  ).serialize()});
 	//var url =  flask_util.url_for('save_contract' ,{ contract_str:str(contract_str)});
 	$(location).attr('href',url);		
     });
