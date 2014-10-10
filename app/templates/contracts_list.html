@@ -56,7 +56,11 @@
 		  <td><a href="{{ url_for('input_income', contract_id = contract.id) }}">{{ contract.description }}</td>
 		  <td>{{ contract.start_date }}</td>
 		  <td>{{ contract.end_date }}</td>
-		  <td>{{ contract.income }}</td>
+		  {% if contract.total_perdiem > 0 %}
+		        <td>{{ contract.income + contract.total_perdiem}}</td>
+		  {% else  %}
+		      <td>{{ contract.income }}</td>
+		  {% endif %}    
 		  </a>
 		  </tr>
 		  

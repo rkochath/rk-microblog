@@ -51,7 +51,8 @@ class InputIncomeForm(Form):
     no_vacations = IntegerField('no_vacations', validators = [Required()])
     no_holidays = IntegerField('no_holidays', validators = [Required()])
     no_sickdays = IntegerField('no_sickdays', validators = [Required()])
-    hourly_rate = DecimalField('hourly_rate', validators = [Required()], places=2) 
+    hourly_rate = DecimalField('hourly_rate', validators = [Required()], places=2)
+    hourly_perdiem = DecimalField('hourly_perdiem', validators = [Required()], places=2)  
 
     work_hours = DecimalField('work_hours', validators = [Required()],places=2)
 #    exclude_nth = SelectField('exclude_nth', choices=[('1', 'Every'), ('2', '2nd'), ('3', '3rd'),('4', '4th'),('5', '5th'),('6', '6th'),('7', '7th'),('8', '8th'),('9', '9th'),('10', '10th')])
@@ -59,7 +60,9 @@ class InputIncomeForm(Form):
 
     exclude_day = SelectField('exclude_day', choices=[('SU', 'SU'), ('MO', 'MO'), ('TU', 'TU'),('WE', 'WE'),('TH', 'TH'),('FR', 'FR'),('SA', 'SA')])
 
-    income = DecimalField('income',places=2)
+    income = DecimalField('income',places=2, widget = HiddenInput())
+    total_perdiem = DecimalField('income',places=2, widget = HiddenInput())
+    total_income = DecimalField('total_income',places=2)  #form only field
     total_days=IntegerField('total_days',widget=HiddenInput()) 
     total_weekends=IntegerField('total_weekends',widget=HiddenInput())
     total_exclusion_days=IntegerField('total_exclusion_days',widget=HiddenInput())

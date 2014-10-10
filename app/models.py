@@ -100,10 +100,12 @@ class Contracts(db.Model):
     no_holidays = db.Column(db.Integer)
     no_sickdays = db.Column(db.Integer)
     hourly_rate = db.Column(db.Numeric(6,2))
+    hourly_perdiem = db.Column(db.Numeric(6,2))
     work_hours = db.Column(db.Numeric(6,2))
     exclude_nth = db.Column(db.Integer)
     exclude_day = db.Column(db.String(2))
     income = db.Column(db.Numeric(14,2))
+    total_perdiem = db.Column(db.Numeric(14,2))
     expense = db.Column(db.Numeric(14,2))   
     other_deductions = db.Column(db.Numeric(14,2))   
     taxes = db.Column(db.Numeric(14,2))   
@@ -201,7 +203,7 @@ class Contracts(db.Model):
 
 
     def __init__(self,     description = '',   start_date = 0,    end_date = 0,    no_vacations = 0,    no_holidays = 0,
-    no_sickdays = 0,    hourly_rate = 0,    work_hours = 0,    exclude_nth = 0,    exclude_day = 0,    income = 0,
+    no_sickdays = 0,    hourly_rate = 0, hourly_perdiem = 0,   work_hours = 0,    exclude_nth = 0,    exclude_day = 0,    income = 0, total_peridiem = 0,
     expense = 0,    other_deductions = 0,    taxes = 0,        is_rent_acar= False,    rental_st_day= '',    rental_end_day= '',
     rental_car_rate = 0,    is_hotel = False,    hotel_st_day = '' ,   hotel_end_day = '',    hotel_rate = 0,    daily_expense = 0,
     is_flight = False,    flight_ticket = 0,    is_airport_pickup = False,    airport_pickup = 0,    is_mileage = False, commute_st_day = '',
@@ -223,10 +225,12 @@ class Contracts(db.Model):
             self.no_holidays = no_holidays
             self.no_sickdays = no_sickdays
             self.hourly_rate = hourly_rate
+            self.hourly_perdiem = hourly_perdiem
             self.work_hours = work_hours
             self.exclude_nth = exclude_nth
             self.exclude_day = exclude_day
             self.income = income
+            self.total_peridiem=total_peridiem
             self.expense = expense
             self.other_deductions = other_deductions
             self.taxes = taxes

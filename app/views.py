@@ -305,7 +305,7 @@ def input_income(contract_id):
     contract = Contracts()	
 
     if request.method == "POST" and form.validate_on_submit():
-	app.logger.info('id %s' % contract_id)        	
+        app.logger.info('inside post and valid')        	
 	
 	
 	if contract_id > 0 :
@@ -314,12 +314,13 @@ def input_income(contract_id):
 	InputIncomeForm(request.form).populate_obj(contract)
 	
 	if request.form['next_step']=='save_as':
+	        app.logger.info('inside save as')        	
 		db.session.expunge(contract)
                 contract_copy = Contracts()		        
 	        for key in contract.__dict__:
 	             if not (key == 'id' or key == '_sa_instance_state' ) :
 	                contract_copy.__dict__[key]=contract.__dict__[key]
-	                app.logger.info("%s:%s" %(key, contract_copy.__dict__[key]))
+	                #app.logger.info("%s:%s" %(key, contract_copy.__dict__[key]))
 	                
 	             
 	             
@@ -329,38 +330,39 @@ def input_income(contract_id):
                 db.session.add(contract_copy)
 	        db.session.flush()
 	        contract_id = contract_copy.id
-	        app.logger.info('Contract saved as  %s' % contract_id)        	
-
                 db.session.commit()
                 flash(gettext('Data saved successfully' ))
+                app.logger.info('save as complete opening the input page')     
 
                 form = InputIncomeForm(obj=contract_copy)
     
                 return render_template('input_income.html',
                         form = form)
         else:	        
+                app.logger.info('inside normal save')     
 	        contract.timestamp = datetime.utcnow()
 	        contract.user_id = g.user.id
                 db.session.add(contract)
 	        db.session.flush()
 	        contract_id = contract.id
-	        app.logger.info('newly inserted id after flush %s' % contract_id)        	
+
                 db.session.commit()
 
                 flash(gettext('Data saved successfully' ))
                 
 	        if request.form['next_step']=='input_expenses':
-                        return redirect(url_for('input_expenses',contract_id = contract_id))
+	            app.logger.info('opening input expenses after save')     
+                    return redirect(url_for('input_expenses',contract_id = contract_id))
                 else:
-
+                    app.logger.info('opening input income after saave')         
                     form = InputIncomeForm(obj=contract)
-                    
                     return render_template('input_income.html',
                         form = form)
 
     if 	request.method == "GET" and contract_id > 0: 
+        app.logger.info('get with contract id')     
     	contract = Contracts.query.filter_by(id = contract_id).first()	
-    
+    app.logger.info('opening input income')     
     form = InputIncomeForm(obj=contract)
             
     return render_template('input_income.html',
@@ -381,6 +383,7 @@ def calculate_income():
             request.form['no_holidays'],
             request.form['no_sickdays'],
             request.form['hourly_rate'],
+            request.form['hourly_perdiem'],
             request.form['work_hours'],
 	    request.form['exclude_nth'],
 	    request.form['exclude_day']
@@ -536,16 +539,16 @@ def input_taxes(contract_id):
 	contract = Contracts.query.filter_by(id = request.form['id']).first()				
 	try:
 	    InputTaxForm(request.form).populate_obj(contract)    	    
-	    app.logger.info('tax rates %s, %s'%(contract.fed_tax_perc,contract.state_tax_perc))
+	    app.logger.info('taxes %s, %s, %s'%(contract.fed_tax,contract.state_tax,contract.taxes))
         except AttributeError as err:
 	    app.logger.info('ERROR:%s' % err)  
 	contract.timestamp = datetime.utcnow()
 	contract.user_id = g.user.id
-	app.logger.info('Saving contract with deduction') 
+	app.logger.info('Saving contract with taxes') 
 	db.session.add(contract)
 	db.session.flush()
 	db.session.commit()
-	app.logger.info('data saved with deduction') 
+	app.logger.info('data saved with taxes') 
 	
     elif  request.method == "GET" :
         contract = Contracts.query.filter_by(id = contract_id).first()	

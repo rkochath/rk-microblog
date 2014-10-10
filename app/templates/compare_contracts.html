@@ -70,14 +70,18 @@
         <tr >
           <td >{{ _('Hourly Rate') }}</td>
           <td class="mynumber">{{contract1.hourly_rate}}</td>
-          <td  class="mynumber">{{ _('Working hours') }}</td>
+          <td>{{ _('Hourly Perdiem ') }}</td>
+          <td class="mynumber">{{contract1.hourly_perdiem}}</td>
+        </tr>
+        <tr>          
+          <td  class="mynumber">{{ _('Working hours/Day') }}</td>
           <td class="mynumber">{{contract1.work_hours}}</td>
           
         </tr>
 
         <tr >
           <td>{{ _('Total Income') }}</td>
-          <td class="mynumber">{{contract1.income}}</td>
+          <td class="mynumber">{{contract1.income + contract1.total_perdiem}}</td>
           
         </tr>
 
@@ -98,7 +102,11 @@
 
         <tr  >
           <td>{{ _('Net Income') }}</td>
-          <td  class="mynumber">{{contract1.income - (contract1.expense+contract1.other_deductions+contract1.taxes)}}</td>
+          {% if contract1.total_perdiem > 0 %}
+              <td  class="mynumber">{{contract1.income + contract1.total_perdiem - (contract1.expense+contract1.other_deductions+contract1.taxes)}}</td>
+          {% else %}
+              <td  class="mynumber">{{contract1.income - (contract1.expense+contract1.other_deductions+contract1.taxes)}}</td>
+        {% endif %}                  
           
         </tr>
 
@@ -170,7 +178,12 @@
         <tr>
           <td>{{ _('Hourly Rate ') }}</td>
           <td class="mynumber">{{contract1.hourly_rate}}</td>
-          <td>{{ _('Working Hours     : ') }} </td>
+          <td>{{ _('Hourly Perdiem ') }}</td>
+          <td class="mynumber">{{contract1.hourly_perdiem}}</td>
+
+        </tr>  
+        <tr>  
+          <td>{{ _('Working Hours/Day     : ') }} </td>
           <td class="mynumber">{{contract1.work_hours}} </td>
         </tr>
 
@@ -182,10 +195,10 @@
         </tr>
 
         <tr class=success>
-          <td>{{ _('Total Income ') }}</td>
+          <td>{{ _('Income ') }}</td>
           <td class="mynumber">{{contract1.income}}</td>
-          <td> </td>
-          <td>  </td>
+          <td>{{ _('Perdiem ') }}</td>
+          <td class="mynumber">{{contract1.total_perdiem}}</td>
         </tr>
       </tbody>
     </table>
@@ -588,14 +601,19 @@
         <tr >
           <td >{{ _('Hourly Rate') }}</td>
           <td class="mynumber">{{contract2.hourly_rate}}</td>
-          <td  class="mynumber">{{ _('Working hours') }}</td>
+          <td>{{ _('Hourly Perdiem ') }}</td>
+          <td class="mynumber">{{contract2.hourly_perdiem}}</td>
+         </tr>
+         <tr>          
+          <td  class="mynumber">{{ _('Working hours/Day') }}</td>
           <td class="mynumber">{{contract2.work_hours}}</td>
           
         </tr>
 
         <tr >
           <td>{{ _('Total Income') }}</td>
-          <td class="mynumber">{{contract2.income}}</td>
+          <td class="mynumber">{{contract2.income + contract2.total_perdiem}}</td>
+
           
         </tr>
 
@@ -616,7 +634,11 @@
 
         <tr  >
           <td>{{ _('Net Income') }}</td>
-          <td  class="mynumber">{{contract2.income - (contract2.expense+contract2.other_deductions+contract2.taxes)}}</td>
+          {% if contract2.total_perdiem > 0 %}
+              <td  class="mynumber">{{contract2.income + contract2.total_perdiem - (contract2.expense+contract2.other_deductions+contract2.taxes)}}</td>
+          {% else %}
+              <td  class="mynumber">{{contract2.income - (contract2.expense+contract2.other_deductions+contract2.taxes)}}</td>
+        {% endif %}                  
           
         </tr>
 
@@ -688,7 +710,11 @@
         <tr>
           <td>{{ _('Hourly Rate ') }}</td>
           <td class="mynumber">{{contract2.hourly_rate}}</td>
-          <td>{{ _('Working Hours     : ') }} </td>
+          <td>{{ _('Hourly Perdiem ') }}</td>
+          <td class="mynumber">{{contract2.hourly_perdiem}}</td>
+        </tr>
+        <tr>          
+          <td>{{ _('Working Hours/Day     : ') }} </td>
           <td class="mynumber">{{contract2.work_hours}} </td>
         </tr>
 
@@ -700,8 +726,11 @@
         </tr>
 
         <tr class=success>
-          <td>{{ _('Total Income ') }}</td>
+          <td>{{ _('Income ') }}</td>
           <td class="mynumber">{{contract2.income}}</td>
+          <td>{{ _('Perdiem ') }}</td>
+          <td class="mynumber">{{contract2.total_perdiem}}</td>
+          
           <td> </td>
           <td>  </td>
         </tr>
@@ -1107,14 +1136,19 @@
         <tr >
           <td >{{ _('Hourly Rate') }}</td>
           <td class="mynumber">{{contract3.hourly_rate}}</td>
-          <td  class="mynumber">{{ _('Working hours') }}</td>
+          <td>{{ _('Hourly Perdiem ') }}</td>
+          <td class="mynumber">{{contract3.hourly_perdiem}}</td>
+         </tr>
+         <tr>          
+          <td  class="mynumber">{{ _('Working hours/Day') }}</td>
           <td class="mynumber">{{contract3.work_hours}}</td>
           
         </tr>
 
         <tr >
           <td>{{ _('Total Income') }}</td>
-          <td class="mynumber">{{contract3.income}}</td>
+          <td class="mynumber">{{contract3.income + contract3.total_perdiem}}</td>
+
           
         </tr>
 
@@ -1135,7 +1169,11 @@
 
         <tr  >
           <td>{{ _('Net Income') }}</td>
-          <td  class="mynumber">{{contract3.income - (contract3.expense+contract3.other_deductions+contract3.taxes)}}</td>
+          {% if contract3.total_perdiem > 0 %}
+              <td  class="mynumber">{{contract3.income + contract3.total_perdiem - (contract3.expense+contract3.other_deductions+contract3.taxes)}}</td>
+          {% else %}
+              <td  class="mynumber">{{contract3.income - (contract3.expense+contract3.other_deductions+contract3.taxes)}}</td>
+        {% endif %}                  
           
         </tr>
 
@@ -1207,7 +1245,11 @@
         <tr>
           <td>{{ _('Hourly Rate ') }}</td>
           <td class="mynumber">{{contract3.hourly_rate}}</td>
-          <td>{{ _('Working Hours     : ') }} </td>
+          <td>{{ _('Hourly Perdiem ') }}</td>
+          <td class="mynumber">{{contract3.hourly_perdiem}}</td>
+        </tr>          
+        <tr>
+          <td>{{ _('Working Hours/Day     : ') }} </td>
           <td class="mynumber">{{contract3.work_hours}} </td>
         </tr>
 
@@ -1219,8 +1261,11 @@
         </tr>
 
         <tr class=success>
-          <td>{{ _('Total Income ') }}</td>
+          <td>{{ _('Income ') }}</td>
           <td class="mynumber">{{contract3.income}}</td>
+          <td>{{ _('Perdiem ') }}</td>
+          <td class="mynumber">{{contract3.total_perdiem}}</td>
+          
           <td> </td>
           <td>  </td>
         </tr>

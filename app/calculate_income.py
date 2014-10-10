@@ -6,8 +6,7 @@ from app import app, db
 from models import User, ROLE_USER, ROLE_ADMIN, Post,Contracts
 
 
-def calculate_total_income(start_date,   end_date,  no_vacations, no_holidays,  no_sickdays, hourly_rate, work_hours,
-exclude_nth ,	exclude_day):
+def calculate_total_income(start_date,   end_date,  no_vacations, no_holidays,  no_sickdays, hourly_rate,hourly_perdiem, work_hours, exclude_nth ,	exclude_day):
 	
 	set = rruleset()
 	sd = parse(start_date)
@@ -27,11 +26,12 @@ exclude_nth ,	exclude_day):
 
 	working_days = len(list(set))
         working_days =  working_days - int(no_vacations) - int(no_holidays) - int(no_sickdays) 
-	income =  working_days  * float(work_hours) * float(hourly_rate)
+        total_perdiem = working_days  * float(work_hours) *  float(hourly_perdiem)
+	income =  working_days  * float(work_hours) * float(hourly_rate) 
 	
-	app.logger.info(str('{"income":%s,"total_days":%s, "total_weekends":%s, "total_exclusion_days": %s}' % ( income,total_days, total_weekends, total_exclusion_days)) )        	
+	#app.logger.info(str('{"income":%s,"total_days":%s, "total_weekends":%s, "total_exclusion_days": %s}' % ( income,total_days, total_weekends, total_exclusion_days)) )        	
 	
-        return str('{"income":%s,"total_days":%s, "total_weekends":%s, "total_exclusion_days": %s}' % ( income,total_days, total_weekends, total_exclusion_days))
+        return str('{"income":%s,"total_perdiem":%s,"total_days":%s, "total_weekends":%s, "total_exclusion_days": %s}' % ( income,total_perdiem, total_days, total_weekends, total_exclusion_days))
 
 def calculate_total_expense(start_date,   end_date,  is_rent_acar, rental_st_day, rental_end_day, rental_car_rate, is_mileage, commute_st_day,   commute_end_day, daily_miles, mileage_rate, is_hotel, hotel_st_day, hotel_end_day, hotel_rate, daily_expense, is_flight, flight_ticket, is_airport_pickup, airport_pickup):
 	app.logger.info('inside calculate total expense fucntion') 
@@ -180,7 +180,7 @@ def calculate_total_taxes(contract_id, start_date,   end_date, fed_tax_perc,stat
         medicare_tax = income*float(medicare_tax_perc)/100
 	app.logger.info('income:%s, Fed Tax:%s, State Tax:%s, SSN Tax:%s, Self Emp Tax: %s, Medicare Tax:%s, Total Taxes:%s' % ( income, fed_tax, state_tax, ssn_tax, self_emp_tax, medicare_tax, (fed_tax+state_tax+ssn_tax+self_emp_tax+medicare_tax) ))
 	
-        return str('{"FedTax":%s,"StateTax":%s, "SSNTax":%s, "SelfEmpTax": %s, "MedicareTax":%s , "TotalTaxes":%s}' % ( fed_tax,state_tax,ssn_tax,self_emp_tax,medicare_tax,(fed_tax+state_tax+ssn_tax+self_emp_tax+medicare_tax)))
+        return str('{"FedTax":%s,"StateTax":%s, "SSNTax":%s, "SelfEmpTax": %s, "MedicareTax":%s , "TotalTaxes":%s}' % ( round(fed_tax,2),round(state_tax,2),round(ssn_tax,2),round(self_emp_tax,2),round(medicare_tax,2),round(fed_tax+state_tax+ssn_tax+self_emp_tax+medicare_tax , 2)))
         
         
          

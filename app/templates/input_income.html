@@ -18,6 +18,8 @@
 	<td>{{ form.total_weekends }}</td>
 	<td>{{ form.total_exclusion_days }}</td>
 	<td>{{ form.next_step }}</td>
+	<td>{{ form.total_perdiem }}</td>
+        <td>{{ form.income }}</td>
 	
         <div class="control-group{% if form.errors.post %} error{% endif %}">
             <label class="control-label"  for="description">{{ _('Contract Description:') }}</label>
@@ -85,7 +87,9 @@
                 {% endfor %}
             </div>
         </div>
-
+        
+<div class="row">
+	<div class="span3">
         <div class="control-group{% if form.errors.post %} error{% endif %}">
             <label class="control-label" for="hourly_rate">{{ _('Hourly Rate:') }}</label>
             <div class="controls">
@@ -95,6 +99,21 @@
                 {% endfor %}
             </div>
         </div>
+        </div>
+      	
+     <div class="span3">
+        <div class="control-group{% if form.errors.post %} error{% endif %}">
+            <label class="control-label" for="hourly_perdiem">{{ _('Hourly Perdiem:') }}</label>
+            <div class="controls">
+                {{ form.hourly_perdiem(cols = 1, rows = 3, class = "span1") }}
+                {% for error in form.errors.hourly_perdiem %}
+                    <span class="help-inline">[{{error}}]</span><br>
+                {% endfor %}
+            </div>
+        </div>
+     </div>
+                
+ </div>
 
         <div class="control-group{% if form.errors.post %} error{% endif %}">
             <label class="control-label" for="work_hours">{{ _('Work Hours/Day:') }}</label>
@@ -107,7 +126,7 @@
         </div>
 
 <div class="row">
-<div class="span3">
+    <div class="span3">
 
         <div class="control-group{% if form.errors.post %} error{% endif %}">
             <label class="control-label" for="exclude_nth">{{ _('Exclude :') }}</label>
@@ -118,8 +137,8 @@
                 {% endfor %}
             </div>
         </div>
-</div>
-<div class="span3">
+   </div>
+   <div class="span3">
         <div class="control-group{% if form.errors.post %} error{% endif %}">
             <label class="control-label" for="exclude_day">{{ _('Day:') }}</label>
             <div class="controls">
@@ -130,18 +149,21 @@
             </div>
         </div>
 
-</div>
+   </div>
 </div>
 
+
         <div class="control-group{% if form.errors.post %} error{% endif %}">
-            <label class="control-label" for="income">{{ _('Total Contract Income:') }}</label>
+            <label class="control-label" for="total_income">{{ _('Total Income:') }}</label>
             <div class="controls">
-                {{ form.income( ReadOnly =True, cols = 2, rows = 3, class = "span2") }} <a href="javascript:calculate_income();">{{ _('Calculate') }}</a>
-                {% for error in form.errors.income %}
+                {{ form.total_income( ReadOnly =True, cols = 2, rows = 3, class = "span2") }} <a href="javascript:calculate_income();">{{ _('Calculate') }}</a>
+                {% for error in form.errors.total_income %}
                     <span class="help-inline">[{{error}}]</span><br>
                 {% endfor %}
             </div>
         </div>
+
+
 	
         <div class="control-group">
             <div class="controls">
@@ -181,6 +203,9 @@ $( document ).ready(function(){
 if (document.getElementById('id').value == 0 || document.getElementById('id').value == '' ){
             document.getElementById("saveas").disabled = true;
     }        
+
+document.getElementById("total_income").value = parseFloat(document.getElementById("income").value) + parseFloat(document.getElementById("total_perdiem").value)
+    
 </script>
 
 

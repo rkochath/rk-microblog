@@ -59,7 +59,7 @@ var Contract_Ids=[];
 		var work_hours = document.getElementById('work_hours');
 		var exclude_nth = document.getElementById('exclude_nth');	
 		var exclude_day = document.getElementById('exclude_day');		
-
+                var hourly_perdiem = document.getElementById('hourly_perdiem');
 		$.post('/calculate_income', {
 		    start_date:start_date.value,
 		    end_date:end_date.value,
@@ -67,6 +67,7 @@ var Contract_Ids=[];
 		    no_holidays:no_holidays.value,
 		    no_sickdays:no_sickdays.value,
 		    hourly_rate:hourly_rate.value,
+		    hourly_perdiem:hourly_perdiem.value,
 		    work_hours:work_hours.value,
 		    exclude_nth:exclude_nth.value,	
 		    exclude_day:exclude_day.value 	
@@ -74,7 +75,9 @@ var Contract_Ids=[];
 		}).done(function(result) {
 	           income = result['income'];
 		   income_tup = JSON.parse(income);
+		   document.getElementById('total_income').value = parseFloat(income_tup['income']) + parseFloat(income_tup['total_perdiem']);
 		   document.getElementById('income').value = parseFloat(income_tup['income']);
+		   document.getElementById('total_perdiem').value = parseFloat(income_tup['total_perdiem']);
 		   document.getElementById('total_days').value = parseInt(income_tup['total_days']);
 		   document.getElementById('total_weekends').value = parseInt(income_tup['total_weekends']);
 		   document.getElementById('total_exclusion_days').value = parseInt(income_tup['total_exclusion_days']);
