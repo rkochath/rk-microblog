@@ -1,0 +1,143 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+{% include 'flash.html' %}
+
+
+    <title>Upload new File</title>
+    <h1>Upload new File</h1>
+    
+    <div class="well">
+    
+    <form action="" method=post enctype=multipart/form-data>
+        {{form.hidden_tag()}}
+        <td>{{ form.id }}</td>
+        <td>{{ form.next_step }}</td>
+
+
+<div class="row">
+
+	<div class="span5">
+
+		<div class="control-group{% if form.errors.post %} error{% endif %}">
+		    <label class="control-label"  for="description">{{ _('Contract Description:') }}</label>
+		    <div class="controls" >
+		        {{ form.description(ReadOnly = True,cols = 1, rows = 1, class = "span4")  }}
+
+		        {% for error in form.errors.description %}
+		            <span class="help-inline">[{{error}}]</span><br>
+		        {% endfor %}
+		    </div>
+		</div>
+	</div>
+
+
+	<div class="span3">
+		<div class="control-group">
+		    <label class="control-label"  for="start_date">{{ _('Start Date:') }}	    </label>            
+		    <div class="controls" >
+
+		        {{ form.start_date(ReadOnly = True,cols = 1, rows = 1, class = "span2")  }}
+
+		        {% for error in form.errors.start_date %}
+		            <span class="help-inline">[{{error}}]</span><br>
+		        {% endfor %}
+		    </div>
+
+		</div>	
+	</div>
+	<div class="span3">
+
+		<div class="control-group">
+		    <label class="control-label"  for="end_date">{{ _('End Date:') }}</label>
+		    <div class="controls" >
+		        {{ form.end_date(ReadOnly = True,cols = 1, rows = 1, class = "span2")  }}
+
+		        {% for error in form.errors.end_date %}
+		            <span class="help-inline">[{{error}}]</span><br>
+		        {% endfor %}
+		    </div>
+		</div>	
+	</div>
+
+	</div>
+
+<div class="row">
+<div class="span3">
+   <p><input type=file name=file>
+</div>
+<div class="span3">   
+      <input type=submit value=Upload>
+</div>      
+<div class="span3">      
+      <a href="{{ url_for('contracts_list') }}"> <input class="btn btn-primary" type="button" value="{{ _('Close') }}"></a>
+      <input id = 'download' class="btn btn-primary" type="button" value="{{ _('Download') }}">
+</div>
+      
+ </div>
+      
+</div>
+
+
+<table class="table">  
+        <thead>  
+          <tr>  
+            <th>Select</th>  
+            <th>Attachment</th>  
+          </tr>  
+        </thead>  
+        <tbody>  
+
+        {% for attachment in attachments %}
+		  <tr>
+		  <td >{{ attachment }}</td>
+		  <td id = "sel" onclick = 'onSelectDoc( "{{attachment}}"  )'> {{ form.sel ( type ="checkbox" ) }} </td>
+		  
+		  </tr>
+		  
+	{% endfor %}
+
+        </tbody>
+     </table>
+     
+    </form>
+    
+<script>
+
+$( document ).ready(function(){
+   $( "#download" ).click(function() {
+   if (Attachments.length > 0){
+            var contract_id = document.getElementById('id').value;    
+            var url =  flask_util.url_for('download_docs' ,{ filename:contract_id+"_"+Attachments[0]  } );
+            var k = Attachments.length;
+            while (k--)  Attachments.shift();
+
+            $(location).attr('href',url); 
+            
+            
+            
+        }
+    else{
+        alert("Select at least one attachment to download");
+        return;
+
+    }    
+   
+    });
+
+/*
+   $( "#sel" ).click(function() {
+   alert(document.getElementById('attachment').value );
+  
+   
+    });
+  */
+    
+    });
+    
+
+
+</script>
+    
+{% endblock %}
