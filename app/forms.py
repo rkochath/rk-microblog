@@ -237,3 +237,20 @@ class InputTaxForm(Form):
         #    return False
         return True
 
+class InputDocsForm(Form):
+
+    id = IntegerField('id',widget=HiddenInput())
+    description = TextField('description')
+    sel = BooleanField('sel')
+    next_step = HiddenField('next_step')
+    start_date = DateField('start_date', display_format='%m-%d-%Y')
+    end_date = DateField('end_date', display_format='%m-%d-%Y')
+
+    def __init__(self,   *args, **kwargs):
+        Form.__init__(self, *args, **kwargs)
+
+    def validate(self):
+	#if not Form.validate(self):
+        #    return False
+        return True
+

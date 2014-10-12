@@ -251,6 +251,7 @@
         <div class="control-group">
             <div class="controls">
                  <input class="btn btn-primary" type="submit" value="{{ _('Save') }}"><a href="{{ url_for('contracts_list') }}"> <input class="btn" type="button" value="{{ _('Close') }}"></a>
+<input id = "docs" class="btn" type="button" value="{{ _('Documents') }}">
 
             </div>
         </div>
@@ -260,6 +261,14 @@
 </div>
 
 </form>
+<script>
+$( document ).ready(function(){
+   $( "#docs" ).click(function() {
+	document.getElementById('next_step').value = 'input_docs';	
+	$( "#input_tax_form" ).submit(); 
+    });
+});
+</script>
 
 
 {% endblock %}

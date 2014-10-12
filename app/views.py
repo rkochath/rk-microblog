@@ -2,9 +2,9 @@ from flask import render_template, flash, redirect, session, url_for, request, g
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from flask.ext.sqlalchemy import get_debug_queries
 from flask.ext.babel import gettext
-from app import app, db, lm, oid, babel, gi,fujs
+from app import app, db, lm, oid, babel, gi,fujs, ALLOWED_EXTENSIONS
 
-from forms import LoginForm, EditForm, PostForm, SearchForm, InputIncomeForm,ContractsListForm,InputExpenseForm, InputOtherDedForm, InputTaxForm
+from forms import LoginForm, EditForm, PostForm, SearchForm, InputIncomeForm,ContractsListForm,InputExpenseForm, InputOtherDedForm, InputTaxForm, InputDocsForm
 from models import User, ROLE_USER, ROLE_ADMIN, Post,Contracts
 from datetime import datetime
 from emails import follower_notification
@@ -18,7 +18,9 @@ import inspect
 import bust_a_bill_views
 import pygeoip
 import time
-
+from werkzeug import secure_filename
+import os
+from flask import send_from_directory
 
 @app.context_processor
 def inject_fujs():
@@ -549,6 +551,9 @@ def input_taxes(contract_id):
 	db.session.flush()
 	db.session.commit()
 	app.logger.info('data saved with taxes') 
+	if request.form['next_step'] == 'input_docs':
+	      return redirect(url_for('input_docs',contract_id=request.form['id']))
+
 	
     elif  request.method == "GET" :
         contract = Contracts.query.filter_by(id = contract_id).first()	
@@ -615,4 +620,46 @@ def delete_contract(contract_ids):
 
     return redirect(url_for('contracts_list'))    
         
+
+
+
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
+           
+           
+@app.route('/input_docs/<contract_id>', methods=['GET', 'POST'])
+def input_docs(contract_id):
+
+    if request.method == 'POST':
+        file = request.files['file']
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            
+                        
+                        
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], contract_id+'_'+ filename))
+            
+    contract = Contracts.query.filter_by(id = contract_id).first()
+    try:	
+        attachments = [file[file.find('_')+1::] for file in os.listdir(app.config['UPLOAD_FOLDER']) if file.startswith(contract_id+'_')]  # Stip out the contract id for from display
+
+    except OSError as err:
+        attachments = []    
+    
+    doc_form = InputDocsForm(obj=contract)        
+    return render_template('input_docs.html',title = 'Input Docs', form=doc_form,attachments=attachments)
+    
+
+@app.route('/download_docs/<filename>')
+def download_docs(filename):
+    app.logger.info("Downloading %s"% os.path.join(app.config['UPLOAD_FOLDER'],  filename))
+    return send_from_directory(app.config['UPLOAD_FOLDER'],
+                                filename)
+                               
+                               
+                               
+
+
 

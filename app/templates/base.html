@@ -23,7 +23,7 @@
     <script>
 
 var Contract_Ids=[];
-    
+var Attachments = [];
     function translate(sourceLang, destLang, sourceId, destId, loadingId) {
         $(destId).hide();
         $(loadingId).show();
@@ -302,6 +302,21 @@ if (Contract_Ids.length>0) {
 Contract_Ids.push(contract_id);
 }         
 
+
+
+function onSelectDoc(attachment){
+
+
+if (attachment.length>0) {
+   var i = Attachments.indexOf(attachment)
+   if (i>=0 ) {
+        Attachments.splice(i,1) ; //remove the attachment on unselect
+        return;
+        }
+}        
+Attachments.push(attachment);
+
+} 
 
     </script>
   </head>

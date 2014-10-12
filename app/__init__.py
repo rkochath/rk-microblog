@@ -6,14 +6,21 @@ from flask.ext.login import LoginManager
 from flask.ext.openid import OpenID
 from flask.ext.mail import Mail
 from flask.ext.babel import Babel, lazy_gettext
+
 from config import basedir, ADMINS, MAIL_SERVER, MAIL_PORT, MAIL_USERNAME, MAIL_PASSWORD,GEOIP_CITYDB
 from momentjs import momentjs
 import pygeoip
 from flask_util_js import FlaskUtilJs
 
 
+UPLOAD_FOLDER = os.path.dirname(__file__)
+ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif','doc','docx','xls'])
+
+
 app = Flask(__name__)
 fujs = FlaskUtilJs(app)
+
+app.config['UPLOAD_FOLDER'] =  os.path.join(UPLOAD_FOLDER,'uploads')
 
 
 
