@@ -2,8 +2,8 @@ import httplib
 import zlib
 import base64
 import StringIO
-from lxml import etree
-
+#from lxml import etree
+from xml import etree
 from uapi_air import parse
 from uapi_air import *
 
