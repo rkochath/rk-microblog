@@ -109,6 +109,17 @@ class InputExpenseForm(Form):
     description = TextField('description')
     start_date = DateField('start_date', display_format='%m-%d-%Y')
     end_date = DateField('end_date', display_format='%m-%d-%Y')
+    no_vacations = IntegerField('no_vacations',widget=HiddenInput())
+    total_exclusion_days = IntegerField('total_exclusion_days',widget=HiddenInput())
+    no_holidays = IntegerField('no_holidays',widget=HiddenInput())
+    no_sickdays = IntegerField('no_sickdays',widget=HiddenInput())
+    
+    tp_from = TextField('tp_from')
+    tp_to = TextField('tp_to')
+
+    tp_depart_date = DateField('tp_depart_date', display_format='%m-%d-%Y')
+    tp_return_date = DateField('tp_return_date', display_format='%m-%d-%Y')
+    
     
     is_rent_acar = BooleanField('is_rent_acar')
     rental_st_day = SelectField('rental_st_day', choices=[('SU', 'SU'), ('MO', 'MO'), ('TU', 'TU'),('WE', 'WE'),('TH', 'TH'),('FR', 'FR'),('SA', 'SA')])
@@ -216,6 +227,7 @@ class InputTaxForm(Form):
     start_date = DateField('start_date', display_format='%m-%d-%Y')
     end_date = DateField('end_date', display_format='%m-%d-%Y')
     taxes = DecimalField('taxes',places=2)
+    income = DecimalField('income',places=2, widget=HiddenInput())
 
     fed_tax_perc = DecimalField('fed_tax_perc', validators = [Required()], places=2)
     state_tax_perc = DecimalField('state_tax_perc', validators = [Required()], places=2)

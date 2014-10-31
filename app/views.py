@@ -21,6 +21,11 @@ import time
 from werkzeug import secure_filename
 import os
 from flask import send_from_directory
+from app.travelport_proxy import TravelportProxy
+import xml.etree.ElementTree as ET
+from traversenode import traverse_pricesolutions
+from collections import *
+#from flask.ext.paginate import Pagination
 
 @app.context_processor
 def inject_fujs():
@@ -459,7 +464,12 @@ def calculate_expenses():
 	    request.form['is_flight'],
 	    request.form['flight_ticket'],
 	    request.form['is_airport_pickup'],
-	    request.form['airport_pickup']		    
+	    request.form['airport_pickup'],
+	    request.form['no_vacations'],
+	    request.form['total_exclusion_days'],
+	    request.form['no_holidays'],
+	    request.form['no_sickdays']
+
 	) })
 
 
@@ -630,20 +640,20 @@ def allowed_file(filename):
            
            
 @app.route('/input_docs/<contract_id>', methods=['GET', 'POST'])
+@login_required
 def input_docs(contract_id):
 
     if request.method == 'POST':
         file = request.files['file']
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
-            
-                        
-                        
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], contract_id+'_'+ filename))
+        else: 
+            flash("Not a valid file %s" % file.filename)    
             
     contract = Contracts.query.filter_by(id = contract_id).first()
     try:	
-        attachments = [file[file.find('_')+1::] for file in os.listdir(app.config['UPLOAD_FOLDER']) if file.startswith(contract_id+'_')]  # Stip out the contract id for from display
+        attachments = [file[file.find('_')+1::] for file in os.listdir(app.config['UPLOAD_FOLDER']) if file.startswith(contract_id+'_')]  # Strip out the contract id for from display
 
     except OSError as err:
         attachments = []    
@@ -653,13 +663,58 @@ def input_docs(contract_id):
     
 
 @app.route('/download_docs/<filename>')
+@login_required
 def download_docs(filename):
     app.logger.info("Downloading %s"% os.path.join(app.config['UPLOAD_FOLDER'],  filename))
     return send_from_directory(app.config['UPLOAD_FOLDER'],
                                 filename)
                                
-                               
-                               
+@app.route('/tp_searchflights', methods = ['POST'])                               
+@login_required
+def tp_searchflights():
+    
+    app.logger.info("Search flights fucntion called")
+    depart_date = "{:%Y-%m-%d}".format(parse(request.form['depart_date']))
+    return_date = "{:%Y-%m-%d}".format(parse(request.form['return_date']))
+    
+    tp = TravelportProxy( 'https://americas.universal-api.pp.travelport.com/B2BGateway/connect/uAPI', 'americas.universal-api.pp.travelport.com', 'Universal API/uAPI-656523788', 'QMt6KjpyPPTS9xwByEEnkNgST', 'P105356', '1G')
+    req = tp.create_air_request(request.form['tp_from'],request.form['tp_to'],depart_date,return_date , rt=True, is_radius=False, incl_GDS=True, incl_lowcost=True, incl_rails=True)
+
+    ret = tp.SOAP_post(req)
+    #app.logger.info(ret)
+    file = open(os.path.join(app.config['UPLOAD_FOLDER'],  'tp%s.xml' % str(g.user.id)) ,'w')
+    file.write(tp.SOAP_post(req))
+    #file.write(ret)
+    file.close()
+    
+    tree = ET.parse(os.path.join(app.config['UPLOAD_FOLDER'],  'tp%s.xml'% str(g.user.id)) )
 
 
+    results=OrderedDict()
+    root = tree.getroot()
+
+    airsegmentlist = traverse_pricesolutions(root,'SegmentRef',root,results)
+    '''
+    file = open(os.path.join(app.config['UPLOAD_FOLDER'],  'tp%s_out.xml' % str(g.user.id)) ,'w')
+    json.dump(airsegmentlist,file)
+    
+    for leg in airsegmentlist:
+                
+          if 'Total Price' in airsegmentlist[leg]:
+                 #print results[leg]['Total Price']
+                 file.write("\n%s"%airsegmentlist[leg])
+          else:
+                 file.write("%s" %(airsegmentlist[leg] ))
+                 #print results[leg]['Origin'], results[leg]['Destination']    
+     
+    file.close()
+    '''
+    #pagination = Pagination(page=page, total=len(airsegmentlist.items()), search=False, record_name='Results')
+
+    #sending the dict.items to preserver sort order 
+    return jsonify({   'tp_results':airsegmentlist.items() })
+
+
+    
+                               
 

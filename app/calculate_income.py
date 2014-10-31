@@ -4,6 +4,7 @@ from datetime import *
 from app import app
 from app import app, db
 from models import User, ROLE_USER, ROLE_ADMIN, Post,Contracts
+from dateutil.relativedelta import *
 
 
 def calculate_total_income(start_date,   end_date,  no_vacations, no_holidays,  no_sickdays, hourly_rate,hourly_perdiem, work_hours, exclude_nth ,	exclude_day):
@@ -33,7 +34,7 @@ def calculate_total_income(start_date,   end_date,  no_vacations, no_holidays,  
 	
         return str('{"income":%s,"total_perdiem":%s,"total_days":%s, "total_weekends":%s, "total_exclusion_days": %s}' % ( income,total_perdiem, total_days, total_weekends, total_exclusion_days))
 
-def calculate_total_expense(start_date,   end_date,  is_rent_acar, rental_st_day, rental_end_day, rental_car_rate, is_mileage, commute_st_day,   commute_end_day, daily_miles, mileage_rate, is_hotel, hotel_st_day, hotel_end_day, hotel_rate, daily_expense, is_flight, flight_ticket, is_airport_pickup, airport_pickup):
+def calculate_total_expense(start_date,   end_date,  is_rent_acar, rental_st_day, rental_end_day, rental_car_rate, is_mileage, commute_st_day,   commute_end_day, daily_miles, mileage_rate, is_hotel, hotel_st_day, hotel_end_day, hotel_rate, daily_expense, is_flight, flight_ticket, is_airport_pickup, airport_pickup,no_vacations, total_exclusion_days,no_holidays,no_sickdays):
 	app.logger.info('inside calculate total expense fucntion') 
 	rrule_constant = {'SU':SU,'MO':MO,'TU':TU,'WE':WE,'TH':TH,'FR':FR,'SA':SA}
 	day_no = {'SU':0,'MO':1,'TU':2,'WE':3,'TH':4,'FR':5,'SA':6}
@@ -57,7 +58,7 @@ def calculate_total_expense(start_date,   end_date,  is_rent_acar, rental_st_day
 		days = [day_no_constant[x] for x in range(st_day_no,end_day_no+1)]
 		app.logger.info('days=%s'% days) 
 		set.rrule(rrule(YEARLY, byweekday=days, dtstart=sd, until=ed))
-		rental_days = len(list(set))
+		rental_days = len(list(set)) - int(no_vacations) # less vacation days
 		total_expense += len(list(set))*float(rental_car_rate)
 		
 	if is_mileage =='true':
@@ -66,7 +67,7 @@ def calculate_total_expense(start_date,   end_date,  is_rent_acar, rental_st_day
 		end_day_no = day_no[commute_end_day]
 		days = [day_no_constant[x] for x in range(st_day_no,end_day_no+1)]
 		set.rrule(rrule(YEARLY, byweekday=days, dtstart=sd, until=ed))	
-		commute_days = len(list(set))
+		commute_days = len(list(set)) - (int(no_vacations)+int( total_exclusion_days)+int(no_holidays) + int(no_sickdays)) # less ex days/vac/sic/holi
 		total_expense += len(list(set))*float(daily_miles)*float(mileage_rate)
 
 	if is_hotel =='true':
@@ -75,7 +76,7 @@ def calculate_total_expense(start_date,   end_date,  is_rent_acar, rental_st_day
 		end_day_no = day_no[hotel_end_day]
 		days = [day_no_constant[x] for x in range(st_day_no,end_day_no+1)]
 		set.rrule(rrule(YEARLY, byweekday=days, dtstart=sd, until=ed))
-		hotel_days = len(list(set))
+		hotel_days = len(list(set)) - int(no_vacations) # less vacation days
 		total_expense += len(list(set))*float(hotel_rate) + len(list(set))*float(daily_expense)
 
 	if is_flight =='true':
@@ -84,6 +85,7 @@ def calculate_total_expense(start_date,   end_date,  is_rent_acar, rental_st_day
 		st_day_no = day_no[rental_st_day]
 		days = day_no_constant[st_day_no]
 		set.rrule(rrule(YEARLY, byweekday=days, dtstart=sd, until=ed))
+                set.exrule(rrule(YEARLY, byweekday=days, dtstart=sd, until=sd + relativedelta(days= + int(no_vacations)) ))	#exclude the flights in the vacation days	
 		no_flights = len(list(set))
 		total_expense += len(list(set))*float(flight_ticket)
 
@@ -93,6 +95,7 @@ def calculate_total_expense(start_date,   end_date,  is_rent_acar, rental_st_day
 		st_day_no = day_no[rental_st_day]
 		days = day_no_constant[st_day_no]
 		set.rrule(rrule(YEARLY, byweekday=days, dtstart=sd, until=ed))
+                set.exrule(rrule(YEARLY, byweekday=days, dtstart=sd, until=sd + relativedelta(days= + int(no_vacations)) ))	#exclude the flights in the vacation days	
 		total_expense += len(list(set))*float(airport_pickup)
 
 

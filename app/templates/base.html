@@ -24,6 +24,7 @@
 
 var Contract_Ids=[];
 var Attachments = [];
+var Resultlist = [];
     function translate(sourceLang, destLang, sourceId, destId, loadingId) {
         $(destId).hide();
         $(loadingId).show();
@@ -48,6 +49,162 @@ var Attachments = [];
    $(function() {
     $( "#end_date" ).datepicker();
     });
+
+
+    $(function() {
+    $( "#tp_depart_date" ).datepicker();
+    });
+
+    $(function() {
+    $( "#tp_return_date" ).datepicker();
+    });
+
+
+   function tp_searchflights() {
+		var depart_date = document.getElementById('tp_depart_date');
+		var return_date = document.getElementById('tp_return_date');
+		var tp_from = document.getElementById('tp_from');	
+		var tp_to = document.getElementById('tp_to');	
+		$.post('/tp_searchflights', {
+		    depart_date:depart_date.value,
+		    return_date:return_date.value,
+		    tp_from:tp_from.value,
+		    tp_to:tp_to.value
+		}).done(function(result) {
+                   Resultlist = result['tp_results']
+                   
+                   var tp_results_table = document.getElementById("tp_results_table"); 
+                   
+		   //resultslist = JSON.parse(result);
+		   for (i = 0; i < Resultlist.length; i++) {
+		            
+		   //for(var name in Resultlist) {
+                            //console.log(name);
+                            //var result_record = Resultlist[name];
+                            
+                            var result_record = Resultlist[i][1];
+                            if (result_record.hasOwnProperty('Total Price')){
+                                 
+                                 var header = tp_results_table.createTHead();
+
+                                 
+                                 var row = header.insertRow(-1); 
+                                 row.setAttribute("style", "background-color: LightCyan;font-weight : bold;");
+                                 
+                                 row.setAttribute("align","center"); 
+                                 var totalprice_tag = row.insertCell(0);
+                                 totalprice_tag.setAttribute("colspan", 4); 
+                                 totalprice_tag.innerHTML = 'Total Price';
+                                 
+                                 var totalprice = row.insertCell(1);
+                                 totalprice.setAttribute("colspan", 4); 
+                                 totalprice.innerHTML = result_record['Total Price'];
+
+
+
+                                 // Create an empty <thead> element and add it to the table:
+                                 var header1 = tp_results_table.createTHead();
+		                 var row1 = header1.insertRow(-1);  
+		                 row1.setAttribute("style", "background-color: LightCyan    ;font-weight : bold   ;");
+		                 
+		                 row1.setAttribute("align","center");
+                                 var carrier_label = row1.insertCell(0);
+                                 carrier_label.innerHTML =  'Carrier';
+
+                                 var flightnumber_label = row1.insertCell(1);
+                                 flightnumber_label.innerHTML ='FlightNumber' ;
+
+                                 var origin_label = row1.insertCell(2);
+                                 origin_label.innerHTML = 'Origin';
+
+                                 var destination_label = row1.insertCell(3);
+                                 destination_label.innerHTML = 'Destination';
+
+                                 var departuretime_label = row1.insertCell(4);
+                                 departuretime_label.innerHTML = 'DepartureTime';
+
+                                 var arrivaltime_label = row1.insertCell(5);
+                                 arrivaltime_label.innerHTML = 'ArrivalTime';
+
+                                 var flighttime_label = row1.insertCell(6);
+                                 flighttime_label.innerHTML = 'FlightTime';
+
+                                 var distance_label = row1.insertCell(7);
+                                 distance_label.innerHTML = 'Distance';
+
+                                 
+                                 
+                                    
+                            }
+                            
+                            else{
+                            //console.log(value);
+                            //for(var n in result_record) {
+                            //     if (n != 'Total Price'){
+                                         //var v = result_record[n]
+                                         //console.log(n+":"+v);
+                            	         //var result_record = Resultlist[i]; 
+                                         // Create an empty <tr> element and add it to the first position of <thead>:
+		                         //var row = header.insertRow(i+1);
+		                         var row = header.insertRow(-1);  
+		                         //row.setAttribute("style", "background-color: Silver   ;");  
+		                         // Insert a new cell (<td>) at the first position of the "new" <tr> element:
+                                         var carrier = row.insertCell(0);
+                                       
+                                         carrier.innerHTML = result_record['Carrier'] ;
+
+                                         var flightnumber = row.insertCell(1);
+                                         flightnumber.innerHTML = result_record['FlightNumber'] ;
+
+                                         var origin = row.insertCell(2);
+                                         origin.innerHTML = result_record['Origin'] ;
+
+                                         var destination = row.insertCell(3);
+                                         destination.innerHTML = result_record['Destination'] ;
+
+                                         var departuretime = row.insertCell(4);
+                                         var d = new Date(result_record['DepartureTime']);
+                                         //departuretime.innerHTML = d.toLocaleDateString()+" " + d.toLocaleTimeString();
+                                         departuretime.innerHTML = moment(d).format('MMM Do YYYY, h:mm a')
+                                         
+
+                                         var arrivaltime = row.insertCell(5);
+                                         d = new Date(result_record['ArrivalTime']);
+                                         //arrivaltime.innerHTML =  d.toLocaleDateString()+" " + d.toLocaleTimeString();
+                                         arrivaltime.innerHTML =moment(d).format('MMM Do YYYY, h:mm a')
+                                         
+                                         
+                                         var flighttime = row.insertCell(6);
+                                         flighttime.innerHTML = result_record['FlightTime'] ;
+
+                                         var distance = row.insertCell(7);
+                                         distance.innerHTML = result_record['Distance'] ;
+                                         //break;
+
+
+
+
+
+                            }     
+                   //}
+                   }
+
+
+
+
+
+                   $(".panel").toggle("fast");
+	           $(".tp_results_panel").toggle("fast");
+		   
+		   
+		   
+		}).fail(function() {
+		   console.log("Some thing went wrong check the logs");
+		});
+
+	    }
+
+
 
    function calculate_income() {
 		var start_date = document.getElementById('start_date');
@@ -112,7 +269,11 @@ var Attachments = [];
 	    var daily_expense = document.getElementById('daily_expense');
 	    var daily_miles = document.getElementById('daily_miles');
 	    var mileage_rate = document.getElementById('mileage_rate');
-	    
+	    var no_vacations = document.getElementById('no_vacations');
+	    var total_exclusion_days = document.getElementById('total_exclusion_days');
+	    var no_holidays = document.getElementById('no_holidays');
+	    var no_sickdays = document.getElementById('no_sickdays');
+
 	    
 	    $.post('/calculate_expenses', {
 		    start_date:start_date.value,
@@ -136,7 +297,12 @@ var Attachments = [];
 		    flight_ticket:flight_ticket.value,
 	
 		    is_airport_pickup:is_airport_pickup ,
-		    airport_pickup:airport_pickup.value
+		    airport_pickup:airport_pickup.value,
+		    no_vacations:no_vacations.value,
+		    total_exclusion_days:total_exclusion_days.value,
+		    
+		    no_holidays:no_holidays.value,
+		    no_sickdays:no_sickdays.value
 		    
 		    
 

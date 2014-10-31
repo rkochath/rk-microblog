@@ -22,7 +22,7 @@ fujs = FlaskUtilJs(app)
 
 app.config['UPLOAD_FOLDER'] =  os.path.join(UPLOAD_FOLDER,'uploads')
 
-
+app.config["JSON_SORT_KEY"] = False
 
 app.config.from_object('config')
 db = SQLAlchemy(app)

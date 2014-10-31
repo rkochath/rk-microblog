@@ -5,8 +5,153 @@
 <h1>{{ _('Input Expenses') }}</h1>
 {% include 'flash.html' %}
 
+<style>
+        .panel {
+        position: absolute;
+        top: 50px;
+        left: 0;
+        display: none;
+        background: Silver;
+        border:1px solid #111111;
+        -moz-border-radius-topright: 20px;
+        -webkit-border-top-right-radius: 20px;
+        -moz-border-radius-bottomright: 20px;
+        -webkit-border-bottom-right-radius: 20px;
+        width: 500px;
+        height: auto;
+        padding: 10px 10px 10px 10px;
+        filter: alpha(opacity=85);
+        opacity: .95;
+        }
+
+        .panel p{
+        margin: 0 0 1px 0;
+        padding: 0;
+        color: #cccccc;
+        }
+
+        .panel a, .panel a:visited{
+        margin: 0;
+        padding: 0;
+        color: #9FC54E;
+        text-decoration: none;
+        border-bottom: 1px solid #9FC54E;
+        }
+
+        .panel a:hover, .panel a:visited:hover{
+        margin: 0;
+        padding: 0;
+        color: #ffffff;
+        text-decoration: none;
+        border-bottom: 1px solid #ffffff;
+        }
+
+        a.trigger{
+        position: absolute;
+        text-decoration: none;
+        top: 80px; left: 0;
+        font-size: 12px;
+        letter-spacing:-1px;
+        font-family: verdana, helvetica, arial, sans-serif;
+        color:#fff;
+        padding: 10px 10px 10px 10px;
+        font-weight: 700;
+        background:#333333 url(images/plus.png) 85% 55% no-repeat;
+        border:1px solid #444444;
+        -moz-border-radius-topright: 20px;
+        -webkit-border-top-right-radius: 20px;
+        -moz-border-radius-bottomright: 20px;
+        -webkit-border-bottom-right-radius: 20px;
+        -moz-border-radius-bottomleft: 0px;
+        -webkit-border-bottom-left-radius: 0px;
+        display: block;
+        }
+
+        a.trigger:hover{
+        position: absolute;
+        text-decoration: none;
+        top: 80px; left: 0;
+        font-size: 16px;
+        letter-spacing:-1px;
+        font-family: verdana, helvetica, arial, sans-serif;
+        color:#fff;
+        padding: 20px 40px 20px 20px;
+        font-weight: 700;
+        background:#222222 url(images/plus.png) 85% 55% no-repeat;
+        border:1px solid #444444;
+        -moz-border-radius-topright: 20px;
+        -webkit-border-top-right-radius: 20px;
+        -moz-border-radius-bottomright: 20px;
+        -webkit-border-bottom-right-radius: 20px;
+        -moz-border-radius-bottomleft: 0px;
+        -webkit-border-bottom-left-radius: 0px;
+        display: block;
+        }
+
+        a.active.trigger {
+        background:#222222 url(images/minus.png) 85% 55% no-repeat;
+        }
+
+
+
+
+        .tp_results_panel {
+        position: absolute;
+        top: 50px;
+        left: 0;
+        display: none;
+        background: White;
+        border:1px solid #111111;
+        -moz-border-radius-topright: 20px;
+        -webkit-border-top-right-radius: 20px;
+        -moz-border-radius-bottomright: 20px;
+        -webkit-border-bottom-right-radius: 20px;
+        width: auto;
+        height:500px;overflow-y:auto;
+        padding: 1px 1px 1px 1px;
+        }
+
+        .tp_results_panel p{
+        margin: 0 0 1px 0;
+        padding: 0;
+        color: Black;
+        }
+
+        .tp_results_panel a, .tp_results_panel a:visited{
+        margin: 0;
+        padding: 0;
+        color: Black;
+        text-decoration: none;
+        border-bottom: 1px solid #9FC54E;
+        }
+
+        .tp_results_panel a:hover, .tp_results_panel a:visited:hover{
+        margin: 0;
+        padding: 0;
+        color: Black;
+        text-decoration: none;
+        border-bottom: 1px solid #ffffff;
+        }
+
+
+        .tp_results_table, th, td{
+
+        border: 1px solid black;
+        border-collapse: collapse;
+        }
+        td {
+            padding: 15px;
+        }
+  
+        tr.alt td {
+    color: #000000;
+    background-color: #EAF2D3;
+}
+</style>
 
 <div class="well">
+
+
 	    <form id = "input_expenses" form class="form-horizontal" action="" method="post" name="post">
 		{{form.hidden_tag()}}
 		<td>{{ form.id }}</td>
@@ -15,6 +160,11 @@
 		<td>{{ form.hotel_days }}</td>
 		<td>{{ form.no_flights }}</td>
 		<td>{{ form.commute_days }}</td>
+		<td>{{ form.no_vacations }}</td>
+		<td>{{ form.total_exclusion_days }}</td>
+		<td>{{ form.no_holidays }}</td>
+		<td>{{ form.no_sickdays }}</td>
+		
 		
 		
 		
@@ -68,6 +218,9 @@
 
 	</div>
 
+
+    
+
 <div class="row">
 <div class="span2">
 
@@ -75,7 +228,7 @@
             <label class="control-label"  for="is_rent_acar">{{ _('Rent A Car:') }}</label>
             <div class="controls"  input type="checkbox">
 
-                {{ form.is_rent_acar( cols = 3, rows = 2, class = "span2")  }}
+                {{ form.is_rent_acar( )  }}
 
                 {% for error in form.errors.is_rent_acar %}
                     <span class="help-inline">[{{error}}]</span><br>
@@ -141,7 +294,7 @@
             <label class="control-label"  for="is_mileage">{{ _('Mileage Expense:') }}</label>
             <div class="controls"  input type="checkbox">
 
-                {{ form.is_mileage(cols = 3, rows = 2, class = "span2")  }}
+                {{ form.is_mileage()  }}
 
                 {% for error in form.errors.is_miles %}
                     <span class="help-inline">[{{error}}]</span><br>
@@ -216,7 +369,7 @@
             <label class="control-label"  for="is_hotel">{{ _('Hotel Stay:') }}</label>
             <div class="controls"  input type="checkbox">
 
-                {{ form.is_hotel(cols = 3, rows = 2, class = "span2")  }}
+                {{ form.is_hotel()  }}
 
                 {% for error in form.errors.is_hotel %}
                     <span class="help-inline">[{{error}}]</span><br>
@@ -295,7 +448,7 @@
             <label class="control-label"  for="is_flight">{{ _('Flight Trip:') }}</label>
             <div class="controls"  input type="checkbox">
 
-                {{ form.is_flight(cols = 3, rows = 2, class = "span2")  }}
+                {{ form.is_flight()  }}
 
                 {% for error in form.errors.is_flight %}
                     <span class="help-inline">[{{error}}]</span><br>
@@ -325,7 +478,7 @@
             <label class="control-label"  for="is_airport_pickup">{{ _('Airport Pickup & Dropoff:') }}</label>
             <div class="controls"  input type="checkbox">
 
-                {{ form.is_airport_pickup(cols = 3, rows = 2, class = "span2")  }}
+                {{ form.is_airport_pickup()  }}
 
                 {% for error in form.errors.is_airport_pickup %}
                     <span class="help-inline">[{{error}}]</span><br>
@@ -366,15 +519,140 @@
 <div class="span2 offset3">
 	<a href="javascript:calculate_expenses();">{{ _('Calculate') }}</a>
 </div>
-  </div>
+
+<div class="panel">
+
+
+<div class="row">
+<div class="span1">
+
+	<div class="control-group{% if form.errors.post %} error{% endif %}">
+            <label class="control-label"  for="tp_from">{{ _('From:') }}</label>
+            <div class="controls"  >
+
+                {{ form.tp_from(cols = 2)  }}
+
+                {% for error in form.errors.tp_from %}
+                    <span class="help-inline">[{{error}}]</span><br>
+                {% endfor %}
+            </div>
+        </div>	
+</div>
+</div>
+<div class="row">
+<div class="span1">
+        <div class="control-group{% if form.errors.post %} error{% endif %}">
+            <label class="control-label" for="tp_to">{{ _('To:') }}</label>
+            <div class="controls">
+                {{ form.tp_to(cols = 2) }}
+                {% for error in form.errors.tp_to %}
+                    <span class="help-inline">[{{error}}]</span><br>
+                {% endfor %}
+            </div>
+        </div>
+
+</div>
+
+</div>
+<div class="row">
+
+
+<div class="span1">
+
+	<div class="control-group{% if form.errors.post %} error{% endif %}">
+            <label class="control-label"  for="tp_depart_date">{{ _('Departure Date:') }}</label>
+            <div class="controls"  >
+
+                {{ form.tp_depart_date(cols = 2)  }}
+
+                {% for error in form.errors.tp_depart_date %}
+                    <span class="help-inline">[{{error}}]</span><br>
+                {% endfor %}
+            </div>
+        </div>	
+</div>
+</div>
+<div class="row">
+<div class="span1">
+        <div class="control-group{% if form.errors.post %} error{% endif %}">
+            <label class="control-label" for="tp_return_date">{{ _('Return Date:') }}</label>
+            <div class="controls">
+                {{ form.tp_return_date(cols = 2) }}
+                {% for error in form.errors.tp_return_date %}
+                    <span class="help-inline">[{{error}}]</span><br>
+                {% endfor %}
+            </div>
+        </div>
+
+</div>
+
+</div>
+
+        <div class="control-group">
+            <div class="controls">
+                <div class="row">
+                <div class="span1">
+            
+                <input class="btn btn-primary" id = tp_search type="button" value="{{ _('Search') }}">
+                </div>
+                <div class="span2">
+                <p><img id="ajaxBusy" src="/static/img/spiffygif_30x30.gif"></p>
+                </div>
+                </div>
+            </div>
+            
+        </div>
+
+        
+
+
+</div>
+</div>
+
+
+<div class="tp_results_panel">
+
+        <h2> Search Results </h2>
+<table id = "tp_results_table" class="tp_results_table "> 
+<!--
+        <thead>  
+          <tr>  
+            <th>Carrier</th>                          
+            <th>FlightNumber</th>                     
+            <th>Origin</th>  
+            <th>Destination</th>  
+            <th>DepartureTime</th> 
+            <th>ArrivalTime</th>
+            <th>FlightTime</th>
+            <th>Distance</th>
+          </tr>  
+        </thead>  
+
+-->
+
+</table> 
+
+</div>
+
+<a id ="trigger" class="trigger" href="#">TravelPort</a>
+
+
+
+
 
 	
         <div class="control-group">
             <div class="controls">
                  <input class="btn btn-primary" type="submit" value="{{ _('Save') }}"><a href="{{ url_for('contracts_list') }}"> <input class="btn btn-primary" type="button" value="{{ _('Close') }}"></a>
-<input class="btn btn-primary" id = other type="button" value="{{ _('Other Deductions') }}"></a>
+<input class="btn btn-primary" id = other type="button" value="{{ _('Other Deductions') }}">
+
+<!--
+<input class="btn btn-primary"  type="button" value="{{ _('Cost Estimator') }}"> </a>
+-->
+
             </div>
         </div>
+
 
 
 <script>
@@ -384,6 +662,57 @@ $( document ).ready(function(){
 	document.getElementById('next_step').value = 'input_other_deductions';	
 	$( "#input_expenses" ).submit(); 
     });
+});
+
+$(document).ready(function(){
+	$(".trigger").click(function(){
+	         
+	        if (this.innerHTML == 'TravelPort'){
+		        $(".panel").toggle("fast");
+		        
+		        }
+		else{
+		        $(".tp_results_panel").toggle("fast");
+		        $(".panel").toggle("fast");
+		        this.innerHTML  = "TravelPort";
+                }
+		                
+		$(this).toggleClass("active");
+		return false;
+	});
+});
+
+$(document).ready(function(){
+	$("#tp_search").click(function(){
+	tp_searchflights();
+        document.getElementById("trigger").innerHTML  = "Search";
+	});
+});
+
+$(document).ready(function() {
+ 
+// Setup the ajax indicator
+//$('panel').append('<div id="ajaxBusy"><p><img src="static/img/loading.gif"></p></div>');
+ 
+$('#ajaxBusy').css({
+display:"none",
+margin:"0px",
+paddingLeft:"2px",
+paddingRight:"2px",
+paddingTop:"2px",
+paddingBottom:"2px",
+position:"absolute",
+right:"3px",
+top:"3px",
+width:"auto"
+});
+});
+ 
+// Ajax activity indicator bound to ajax start/stop document events
+$(document).ajaxStart(function(){
+$('#ajaxBusy').show();
+}).ajaxStop(function(){
+$('#ajaxBusy').hide();
 });
 
 </script>
