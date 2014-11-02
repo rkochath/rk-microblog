@@ -227,7 +227,7 @@ class InputTaxForm(Form):
     start_date = DateField('start_date', display_format='%m-%d-%Y')
     end_date = DateField('end_date', display_format='%m-%d-%Y')
     taxes = DecimalField('taxes',places=2)
-    income = DecimalField('income',places=2, widget=HiddenInput())
+    
 
     fed_tax_perc = DecimalField('fed_tax_perc', validators = [Required()], places=2)
     state_tax_perc = DecimalField('state_tax_perc', validators = [Required()], places=2)
