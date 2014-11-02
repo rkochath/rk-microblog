@@ -687,6 +687,7 @@ def tp_searchflights():
     #file.write(ret)
     file.close()
     
+    
     tree = ET.parse(os.path.join(app.config['UPLOAD_FOLDER'],  'tp%s.xml'% str(g.user.id)) )
 
 

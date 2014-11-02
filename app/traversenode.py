@@ -1,7 +1,8 @@
 import xml.etree.ElementTree as ET
 from flask import jsonify,json
 from collections import *
-
+from datetime import *
+from dateutil.parser import *
 
 def traverse_flightsegments(root, segmentreflist, totalprice,price_key):
         #Get all the AirSegments filtered and take their attributes into a list
@@ -20,15 +21,44 @@ def traverse_flightsegments(root, segmentreflist, totalprice,price_key):
              legs.append(  sl.index(segment))
         #Use an ordered dict over regular dict to preserve order of insertion                     
         results=OrderedDict()
+        
+        outbound_stops=0
+        return_stops=0
+        outbound_triptime=0
+        return_triptime = 0
+        return_legindex = 0
+
+        for leg in legs:
+            if segmentlist[leg]['Group'] == '0' :
+                 outbound_stops +=1
+                 outbound_triptime += int(segmentlist[leg]['FlightTime'])
+                 if legs.index(leg) > 0:
+                      time_diff = (parse(segmentlist[leg]['DepartureTime'] ) - parse(prev_leg_arrival) )
+                      outbound_triptime += time_diff.days*24*60 + time_diff.seconds/60
+                      
+                 
+            else:     
+                 return_stops +=1
+                 return_triptime += int(segmentlist[leg]['FlightTime'])
+                 if return_legindex == 0:
+                     return_legindex = legs.index(leg) 
+                     
+                 if legs.index(leg) > return_legindex:
+                      time_diff = (parse(segmentlist[leg]['DepartureTime'] ) - parse(prev_leg_arrival) )
+                      return_triptime += time_diff.days*24*60 + time_diff.seconds/60
+
+            prev_leg_arrival = segmentlist[leg]['ArrivalTime']
+
         #Keys are carried over to the dict to maintain uniqueness
-        header = '{"%s": {"Total Price":"%s"}}' % (price_key, totalprice)
+        header = '{"%s": {"Total Price":"%s", "OB Stops":"%s","OB Time":"%s","RT Stops":"%s","RT Time":"%s" }}' % (price_key, totalprice,outbound_stops-1,outbound_triptime,return_stops -1,return_triptime )
         #Use json loads to convert string to dict. use update dict method to add newly formed price info to the dict
         results.update(json.loads(header))
-        flighttime=0
+
+        
         #capture additional attriutes for each leg from the segment attribute list
         for leg in legs:
-            
             row = '{"%s": {"FlightDetails":"%s", "Carrier":"%s", "FlightNumber":"%s","Origin":"%s","Destination":"%s", "DepartureTime":"%s","ArrivalTime":"%s", "FlightTime":"%s","Distance":"%s"}}' % ( price_key+ segmentlist[leg]['Key'], segmentlist[leg]['Key'], segmentlist[leg]['Carrier'],segmentlist[leg]['FlightNumber'], segmentlist[leg]['Origin'],segmentlist[leg]['Destination'], segmentlist[leg]['DepartureTime'], segmentlist[leg]['ArrivalTime'],segmentlist[leg]['FlightTime'],segmentlist[leg]['Distance'])
+            
             #add the leg attributes into the dict
             results.update(json.loads(row))
             

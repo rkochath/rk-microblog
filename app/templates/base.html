@@ -89,16 +89,21 @@ var Resultlist = [];
 
                                  
                                  var row = header.insertRow(-1); 
-                                 row.setAttribute("style", "background-color: LightCyan;font-weight : bold;");
+                                 row.setAttribute("style", "background-color: GreenYellow ;font-weight : bold;");
                                  
                                  row.setAttribute("align","center"); 
                                  var totalprice_tag = row.insertCell(0);
-                                 totalprice_tag.setAttribute("colspan", 4); 
-                                 totalprice_tag.innerHTML = 'Total Price';
+                                 totalprice_tag.setAttribute("colspan", 2); 
+                                 totalprice_tag.innerHTML = 'Total Price'+":"+result_record['Total Price'];
                                  
-                                 var totalprice = row.insertCell(1);
-                                 totalprice.setAttribute("colspan", 4); 
-                                 totalprice.innerHTML = result_record['Total Price'];
+
+                                 var ob_stops_tag = row.insertCell(1);
+                                 ob_stops_tag.setAttribute("colspan", 3); 
+                                 ob_stops_tag.innerHTML = "Outbound : "+result_record['OB Stops']+" Stop[s] / "+result_record['OB Time']+" mins";
+
+                                 var rt_stops_tag = row.insertCell(2);
+                                 rt_stops_tag.setAttribute("colspan", 3); 
+                                 rt_stops_tag.innerHTML = "Return : "+result_record['RT Stops']+" Stop[s] / "+result_record['RT Time']+" mins";
 
 
 
@@ -139,15 +144,8 @@ var Resultlist = [];
                             
                             else{
                             //console.log(value);
-                            //for(var n in result_record) {
-                            //     if (n != 'Total Price'){
-                                         //var v = result_record[n]
-                                         //console.log(n+":"+v);
-                            	         //var result_record = Resultlist[i]; 
                                          // Create an empty <tr> element and add it to the first position of <thead>:
-		                         //var row = header.insertRow(i+1);
 		                         var row = header.insertRow(-1);  
-		                         //row.setAttribute("style", "background-color: Silver   ;");  
 		                         // Insert a new cell (<td>) at the first position of the "new" <tr> element:
                                          var carrier = row.insertCell(0);
                                        
